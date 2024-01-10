@@ -1,5 +1,9 @@
 package chess;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * A chessboard that can hold and rearrange chess pieces.
  * <p>
@@ -8,8 +12,30 @@ package chess;
  */
 public class ChessBoard {
 
+    /****
+     * boardPiece {
+     *     Position
+     *     Piece
+     * }
+     *
+     */
+    //HashMap can be used to look up chess pieces based on position
+    private ArrayList<ChessPosition> board;
+    private Map<ChessPosition,ChessPiece> piecesMap;
+
+
     public ChessBoard() {
-        
+        //initialize board positions
+        board = new ArrayList<ChessPosition>();
+        for(int i = 0; i < 8; i++){
+            for(int j = 0; i < 8; i++){
+                ChessPosition position = new ChessPosition(i,j);
+                board.add(position);
+            }
+        }
+        //initialize Map
+        piecesMap = new HashMap<ChessPosition,ChessPiece>();
+
     }
 
     /**
@@ -19,7 +45,17 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        throw new RuntimeException("Not implemented");
+        //check that the ChessPosition is valid
+        boolean isValPosition = false;
+        for( int i = 0; i < board.size(); i++){
+            if (position == board.get(i)){
+                isValPosition = true;
+                break;
+            }
+        }
+        // create chessPiece
+        piecesMap.put(position,piece);
+        //throw new RuntimeException("Not implemented");
     }
 
     /**
@@ -30,7 +66,9 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        throw new RuntimeException("Not implemented");
+        ChessPiece piece = piecesMap.get(position);
+        return piece;
+        //throw new RuntimeException("Not implemented");
     }
 
     /**
