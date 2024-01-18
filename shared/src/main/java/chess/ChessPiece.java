@@ -60,6 +60,9 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> moves = new ArrayList<ChessMove>();
         if(type == PieceType.KING ){
+            int startRow = myPosition.getRow();
+            int startCol = myPosition.getColumn();
+            //get low positions
 
         }
         else if (type == PieceType.QUEEN){

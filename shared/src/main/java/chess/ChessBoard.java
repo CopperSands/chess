@@ -20,25 +20,11 @@ public class ChessBoard {
      * }
      *
      */
-    //HashMap can be used to look up chess pieces based on position
-    private ArrayList<ChessPosition> board;
-    private Map<ChessPosition,ChessPiece> piecesMap;
-
+    private ChessPiece [][] chessBoard;
 
     public ChessBoard() {
         //initialize board positions
-        board = new ArrayList<ChessPosition>();
-        for(int i = 0; i < 8; i++){
-            for(int j = 0; j < 8; j++){
-                ChessPosition position = new ChessPosition(i,j);
-                board.add(position);
-            }
-        }
-        //initialize Map
-        piecesMap = new HashMap<ChessPosition,ChessPiece>();
-        //resetBoard();
-        //
-
+        chessBoard = new ChessPiece[9][9];
     }
 
     /**
@@ -46,19 +32,14 @@ public class ChessBoard {
      *
      * @param position where to add the piece to
      * @param piece    the piece to add
+     * In tests values will start at 1 and end at 8
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        //check that the ChessPosition is valid
-        boolean isValPosition = false;
-        for( int i = 0; i < board.size(); i++){
-            if (position == board.get(i)){
-                isValPosition = true;
-                break;
-            }
+        int xCoor = position.getColumn();
+        int yCoor = position.getRow();
+        if (xCoor <= 8 && yCoor <= 8) {
+            chessBoard[yCoor][xCoor] = piece;
         }
-        // create chessPiece
-        piecesMap.put(position,piece);
-        //throw new RuntimeException("Not implemented");
     }
 
     /**
@@ -69,7 +50,12 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        ChessPiece piece = piecesMap.get(position);
+
+        int xCoor = position.getColumn();
+        int yCoor = position.getRow();
+        ChessPiece piece = chessBoard[xCoor][yCoor];
+
+        //ChessPiece piece = piecesMap.get(position);
         return piece;
         //throw new RuntimeException("Not implemented");
     }
@@ -77,89 +63,36 @@ public class ChessBoard {
     /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)
+     * The tests have an off by one error for the 2d array adjustments were made
      */
     public void resetBoard()
     {
-        piecesMap = new HashMap<ChessPosition,ChessPiece>();
-        //white Rook
-        ChessPosition position = new ChessPosition(0,0);
-        ChessPiece piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
-        addPiece(position,piece);
-
-        position = new ChessPosition(0,1);
-        piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
-        addPiece(position, piece);
-
-        position = new ChessPosition(0,2);
-        piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
-        addPiece(position,piece);
-
-        position = new ChessPosition(0,3);
-        piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
-        addPiece(position,piece);
-
-        position = new ChessPosition(0,4);
-        piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
-        addPiece(position,piece);
-
-        position = new ChessPosition(0,5);
-        piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
-        addPiece(position,piece);
-
-        position = new ChessPosition(0,6);
-        piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
-        addPiece(position, piece);
-
-        position = new ChessPosition(0,7);
-        piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
-        addPiece(position,piece);
-
-        //add white pawns
-        for (int i = 0; i < 8; i++){
-            position = new ChessPosition(1,i);
-            piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
-            addPiece(position,piece);
+        chessBoard = new ChessPiece[9][9];
+        //create white team
+        chessBoard[1][1] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
+        chessBoard[1][2] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
+        chessBoard[1][3] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
+        chessBoard[1][4] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
+        chessBoard[1][5] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
+        chessBoard[1][6] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
+        chessBoard[1][7] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
+        chessBoard[1][8] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
+        //set up white pawns
+        for (int i = 1; i < 9; i ++){
+            chessBoard[2][i] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
         }
-
-        //black pieces
-        position = new ChessPosition(7,0);
-        piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
-        addPiece(position,piece);
-
-        position = new ChessPosition(7,1);
-        piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
-        addPiece(position, piece);
-
-        position = new ChessPosition(7,2);
-        piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
-        addPiece(position,piece);
-
-        position = new ChessPosition(7,3);
-        piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
-        addPiece(position,piece);
-
-        position = new ChessPosition(7,4);
-        piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
-        addPiece(position,piece);
-
-        position = new ChessPosition(7,5);
-        piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
-        addPiece(position,piece);
-
-        position = new ChessPosition(7,6);
-        piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
-        addPiece(position, piece);
-
-        position = new ChessPosition(7,7);
-        piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
-        addPiece(position,piece);
-
-        for (int i = 0; i < 8; i++){
-            position = new ChessPosition(6,i);
-            piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
-            addPiece(position,piece);
+        //set up black team
+        chessBoard[8][1] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
+        chessBoard[8][2] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
+        chessBoard[8][3] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
+        chessBoard[8][4] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
+        chessBoard[8][5] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
+        chessBoard[8][6] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
+        chessBoard[8][7] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
+        chessBoard[8][8] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
+        for (int i = 1; i < 9; i++){
+            chessBoard[7][i] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
         }
-        //throw new RuntimeException("Not implemented");
     }
 
     @Override
@@ -168,40 +101,32 @@ public class ChessBoard {
         if (o == null || getClass() != o.getClass()) return false;
         ChessBoard that = (ChessBoard) o;
 
-        //check board
+        //check each spot of the board
         boolean isEqual = true;
-        if (board.size() == that.board.size()){
-            for (int i = 0; i < board.size(); i++){
-                ChessPosition thisBoard = board.get(i);
-                ChessPosition thatBoard = that.board.get(i);
-                //only overrided the equals function in ChessPosition
-                if (!thisBoard.equals(thatBoard)){
+        for (int i = 0; i < 9; i++){
+            for (int j = 0; j < 9; j++){
+
+                //if both chessboards have a null piece at the same coordinate they are the same do
+                //do nothing. if the current chessboard has a null piece but the other does not they
+                //they aren't equal. The last if statement uses the ChessPiece equals and compares
+                // values between the two. It will also return false if the other chessboard has a null
+                // value.
+                if(chessBoard[i][j] == null && that.chessBoard[i][j] == null){
+                }
+                else if (chessBoard[i][j] == null && that.chessBoard[i][j] != null){
                     isEqual = false;
+                }
+                else if (!(chessBoard[i][j].equals(that.chessBoard[i][j]))){
+                    isEqual = false;
+                    break;
                 }
             }
         }
-        else{
-            isEqual = false;
-        }
-
-        //compare pieceMaps
-        if(piecesMap.size() == that.piecesMap.size()){
-            for(int i = 0; i < board.size(); i++){
-                if(piecesMap.get(i) != that.piecesMap.get(i)){
-                    isEqual = false;
-                }
-            }
-        }
-        else {
-            isEqual = false;
-        }
-
         return isEqual;
-        //return Objects.equals(board, that.board) && Objects.equals(piecesMap, that.piecesMap);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(board, piecesMap);
+        return Objects.hash(chessBoard);
     }
 }
