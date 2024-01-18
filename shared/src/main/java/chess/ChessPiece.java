@@ -59,16 +59,16 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> moves = new ArrayList<ChessMove>();
+        int startRow = myPosition.getRow();
+        int startCol = myPosition.getColumn();
         if(type == PieceType.KING ){
-            int startRow = myPosition.getRow();
-            int startCol = myPosition.getColumn();
-            //get low positions
 
         }
         else if (type == PieceType.QUEEN){
 
         }
         else if (type == PieceType.BISHOP){
+        moves = bishopMoves(board,myPosition);
 
         }
         else if (type == PieceType.KNIGHT){
@@ -82,6 +82,85 @@ public class ChessPiece {
         }
         return moves;
         //throw new RuntimeException("Not implemented");
+    }
+
+    private Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition startPosition){
+        Collection<ChessMove> moves = new ArrayList<ChessMove>();
+        int startRow = startPosition.getRow();
+        int startCol = startPosition.getColumn();
+
+        //check the up right diagonal for moves
+        // first if statement adds a move if the next space is empty
+        // the second if adds a move if the space is occupied by an opposing team piece then exits the loop
+        int i = 1;
+        while (((startRow + i) < 9) && ((startCol + i) < 9)){
+            ChessPosition nextSpace = new ChessPosition(startRow + i, startCol + i);
+            if (board.getPiece(nextSpace) == null){
+                ChessMove newMove = new ChessMove(startPosition,nextSpace,null);
+                moves.add(newMove);
+            }
+            else if (board.getPiece(nextSpace).getTeamColor() != this.teamColor){
+                ChessMove newMove = new ChessMove(startPosition,nextSpace,null);
+                moves.add(newMove);
+                break;
+            }
+            i++;
+        }
+
+        //checks for down left diagonal
+        i = -1;
+        while (((startRow + i) > 0) && ((startCol + i) > 0)){
+            ChessPosition nextSpace = new ChessPosition(startRow + i, startCol + i);
+            if (board.getPiece(nextSpace) == null){
+                ChessMove newMove = new ChessMove(startPosition,nextSpace,null);
+                moves.add(newMove);
+            }
+            else if (board.getPiece(nextSpace).getTeamColor() != this.teamColor){
+                ChessMove newMove = new ChessMove(startPosition,nextSpace,null);
+                moves.add(newMove);
+                break;
+            }
+            i--;
+        }
+
+        //check for top left
+        i = 1;
+        int j = -1;
+        while (((startRow + i) < 9) && ((startCol + j) > 0)){
+            ChessPosition nextSpace = new ChessPosition(startRow + i, startCol + j);
+            if (board.getPiece(nextSpace) == null){
+                ChessMove newMove = new ChessMove(startPosition,nextSpace,null);
+                moves.add(newMove);
+            }
+            else if (board.getPiece(nextSpace).getTeamColor() != this.teamColor){
+                ChessMove newMove = new ChessMove(startPosition,nextSpace,null);
+                moves.add(newMove);
+                break;
+            }
+            i++;
+            j--;
+        }
+
+        //check bottom right
+        i = -1;
+        j = 1;
+        while (((startRow + i) > 0) && ((startCol + j) < 9)){
+            ChessPosition nextSpace = new ChessPosition(startRow + i, startCol + j);
+            if (board.getPiece(nextSpace) == null){
+                ChessMove newMove = new ChessMove(startPosition,nextSpace,null);
+                moves.add(newMove);
+            }
+            else if (board.getPiece(nextSpace).getTeamColor() != this.teamColor){
+                ChessMove newMove = new ChessMove(startPosition,nextSpace,null);
+                moves.add(newMove);
+                break;
+            }
+            i--;
+            j++;
+        }
+
+
+        return moves;
     }
 
     @Override

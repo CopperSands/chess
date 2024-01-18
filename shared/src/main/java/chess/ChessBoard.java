@@ -35,10 +35,10 @@ public class ChessBoard {
      * In tests values will start at 1 and end at 8
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        int xCoor = position.getColumn();
-        int yCoor = position.getRow();
-        if (xCoor <= 8 && yCoor <= 8) {
-            chessBoard[yCoor][xCoor] = piece;
+        int col = position.getColumn();
+        int row = position.getRow();
+        if (row <= 8 && col <= 8) {
+            chessBoard[row][col] = piece;
         }
     }
 
@@ -51,9 +51,9 @@ public class ChessBoard {
      */
     public ChessPiece getPiece(ChessPosition position) {
 
-        int xCoor = position.getColumn();
-        int yCoor = position.getRow();
-        ChessPiece piece = chessBoard[xCoor][yCoor];
+        int col = position.getColumn();
+        int row = position.getRow();
+        ChessPiece piece = chessBoard[row][col];
 
         //ChessPiece piece = piecesMap.get(position);
         return piece;
