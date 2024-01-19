@@ -92,6 +92,7 @@ public class ChessPiece {
         //check the up right diagonal for moves
         // first if statement adds a move if the next space is empty
         // the second if adds a move if the space is occupied by an opposing team piece then exits the loop
+        // third if breaks the loop if a team piece is encountered.
         int i = 1;
         while (((startRow + i) < 9) && ((startCol + i) < 9)){
             ChessPosition nextSpace = new ChessPosition(startRow + i, startCol + i);
@@ -102,6 +103,9 @@ public class ChessPiece {
             else if (board.getPiece(nextSpace).getTeamColor() != this.teamColor){
                 ChessMove newMove = new ChessMove(startPosition,nextSpace,null);
                 moves.add(newMove);
+                break;
+            }
+            else if (board.getPiece(nextSpace).getTeamColor() == this.teamColor){
                 break;
             }
             i++;
@@ -118,6 +122,9 @@ public class ChessPiece {
             else if (board.getPiece(nextSpace).getTeamColor() != this.teamColor){
                 ChessMove newMove = new ChessMove(startPosition,nextSpace,null);
                 moves.add(newMove);
+                break;
+            }
+            else if (board.getPiece(nextSpace).getTeamColor() == this.teamColor){
                 break;
             }
             i--;
@@ -137,6 +144,9 @@ public class ChessPiece {
                 moves.add(newMove);
                 break;
             }
+            else if (board.getPiece(nextSpace).getTeamColor() == this.teamColor){
+                break;
+            }
             i++;
             j--;
         }
@@ -153,6 +163,9 @@ public class ChessPiece {
             else if (board.getPiece(nextSpace).getTeamColor() != this.teamColor){
                 ChessMove newMove = new ChessMove(startPosition,nextSpace,null);
                 moves.add(newMove);
+                break;
+            }
+            else if (board.getPiece(nextSpace).getTeamColor() == this.teamColor){
                 break;
             }
             i--;
