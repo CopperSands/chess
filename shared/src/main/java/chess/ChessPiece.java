@@ -72,7 +72,7 @@ public class ChessPiece {
 
         }
         else if (type == PieceType.KNIGHT){
-
+        moves = knightMoves(board,myPosition);
         }
         else if (type == PieceType.ROOK){
 
@@ -82,6 +82,47 @@ public class ChessPiece {
         }
         return moves;
         //throw new RuntimeException("Not implemented");
+    }
+
+    private Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition startPosition){
+        Collection<ChessMove> moves = new ArrayList<ChessMove>();
+        int startRow = startPosition.getRow();
+        int startCol = startPosition.getColumn();
+
+        if (((startRow + 2) < 9) && ((startCol + 1) < 9)){
+            ChessPosition nextSpace = new ChessPosition(startRow +2,startCol+1);
+            addMove(board,moves,startPosition,nextSpace);
+        }
+        if (((startRow +2) < 9) &&((startCol -1) > 0)){
+            ChessPosition nextSpace = new ChessPosition(startRow + 2,startCol -1);
+            addMove(board,moves,startPosition,nextSpace);
+        }
+        if ((startRow +1) < 9 && ((startCol -2) > 0)){
+            ChessPosition nextSpace = new ChessPosition(startRow +1, startCol -2);
+            addMove(board,moves,startPosition,nextSpace);
+        }
+        if (((startRow -1) > 0) && ((startCol -2) > 0)){
+            ChessPosition nextSpace = new ChessPosition(startRow -1, startCol -2);
+            addMove(board,moves,startPosition,nextSpace);
+        }
+        if (((startRow -2) > 0) && ((startCol +1) < 9)){
+            ChessPosition nextSpace = new ChessPosition(startRow -2, startCol +1);
+            addMove(board,moves,startPosition,nextSpace);
+        }
+        if (((startRow -2) > 0) && ((startCol -1) > 0)){
+            ChessPosition nextSpace = new ChessPosition(startRow -2, startCol -1);
+            addMove(board,moves,startPosition,nextSpace);
+        }
+        if (((startRow +1) < 9) && ((startCol +2) < 9)){
+            ChessPosition nextSpace = new ChessPosition(startRow +1, startCol +2);
+            addMove(board,moves,startPosition,nextSpace);
+        }
+        if (((startRow -1) > 0) && ((startCol + 2) < 9)){
+            ChessPosition nextSpace = new ChessPosition(startRow -1, startCol +2);
+            addMove(board,moves,startPosition,nextSpace);
+        }
+
+        return moves;
     }
 
     private Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition startPosition){
