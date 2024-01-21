@@ -67,7 +67,7 @@ public class ChessPiece {
         moves = kingMoves(board,myPosition);
         }
         else if (type == PieceType.QUEEN){
-
+        moves = queenMoves(board,myPosition);
         }
         else if (type == PieceType.BISHOP){
         moves = bishopMoves(board,myPosition);
@@ -84,6 +84,102 @@ public class ChessPiece {
         }
         return moves;
         //throw new RuntimeException("Not implemented");
+    }
+
+    private Collection<ChessMove> queenMoves (ChessBoard board, ChessPosition startPosition){
+        Collection<ChessMove> moves = new ArrayList<ChessMove>();
+        int startRow = startPosition.getRow();
+        int startCol = startPosition.getColumn();
+
+        //top right
+        int i = 1;
+        int j = 1;
+        boolean isMore = true;
+        while (startRow + i < 9 && startCol +j < 9 && isMore){
+            ChessPosition nextSpace = new ChessPosition(startRow +i, startCol +j);
+            isMore = addMove(board,moves,startPosition,nextSpace);
+
+            i++;
+            j++;
+        }
+
+        //top
+        i = 1;
+        isMore = true;
+        while(startRow + i < 9 && isMore){
+            ChessPosition nextSpace = new ChessPosition(startRow + i,startCol);
+            isMore = addMove(board,moves,startPosition,nextSpace);
+
+            i++;
+        }
+
+        //top left
+        i = 1;
+        j = -1;
+        isMore = true;
+        while(startRow + i < 9 && startCol + j > 0 && isMore){
+            ChessPosition nextSpace = new ChessPosition(startRow + i,startCol + j);
+            isMore = addMove(board,moves,startPosition,nextSpace);
+
+            i++;
+            j--;
+        }
+
+        //left
+        j = -1;
+        isMore = true;
+        while(startCol + j > 0 && isMore ){
+            ChessPosition nextSpace = new ChessPosition(startRow, startCol + j);
+            isMore = addMove(board,moves,startPosition,nextSpace);
+
+            j--;
+        }
+
+        //bottom left
+        i = -1;
+        j = -1;
+        isMore = true;
+        while(startRow + i > 0 && startCol + j > 0 && isMore){
+            ChessPosition nextSpace = new ChessPosition(startRow + i, startCol +j);
+            isMore = addMove(board,moves,startPosition,nextSpace);
+
+            i--;
+            j--;
+        }
+
+        // bottom
+        i = -1;
+        isMore = true;
+        while (startRow + i > 0 && isMore){
+            ChessPosition nextSpace = new ChessPosition(startRow + i, startCol);
+            isMore = addMove(board,moves,startPosition,nextSpace);
+
+            i--;
+        }
+
+        //bottom right
+        i = -1;
+        j = 1;
+        isMore = true;
+        while (startRow + i > 0 && startCol + j < 9 && isMore){
+            ChessPosition nextSpace = new ChessPosition(startRow + i, startCol + j);
+            isMore = addMove(board,moves,startPosition,nextSpace);
+
+            i--;
+            j++;
+        }
+
+        //right
+        j = 1;
+        isMore = true;
+        while(startCol + j < 9 && isMore){
+            ChessPosition nextSpace = new ChessPosition(startRow,startCol + j);
+            isMore = addMove(board,moves,startPosition,nextSpace);
+
+            j++;
+        }
+
+        return moves;
     }
 
     /**
