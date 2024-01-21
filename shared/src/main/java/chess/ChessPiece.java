@@ -1,7 +1,9 @@
 package chess;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
 
 /**
@@ -78,10 +80,144 @@ public class ChessPiece {
 
         }
         else if (type == PieceType.PAWN){
-
+        moves = pawnMoves(board,myPosition);
         }
         return moves;
         //throw new RuntimeException("Not implemented");
+    }
+
+    /**
+     * Gets all pawn moves in and returns them in a HashSet
+     * @param board
+     * @param startPosition
+     * @return
+     */
+    private Collection<ChessMove> pawnMoves (ChessBoard board, ChessPosition startPosition){
+        //had to change the collection to a HashSet to pass the tests.
+        Collection<ChessMove> moves = new HashSet<ChessMove>();
+        int startRow = startPosition.getRow();
+        int startCol = startPosition.getColumn();
+
+        //write separate condition for white and black team
+        if (teamColor == ChessGame.TeamColor.WHITE){
+            //only a pawn is in the start has this move
+            if (startRow == 2){
+                ChessPosition nextSpace = new ChessPosition(startRow + 2, startCol);
+                ChessPosition front = new ChessPosition(startRow +1, startCol);
+                if (board.getPiece(nextSpace) == null && board.getPiece(front) == null){
+                    ChessMove newMove = new ChessMove(startPosition,nextSpace,null);
+                    moves.add(newMove);
+                }
+            }
+            if (startRow + 1 < 9){
+                if (startCol -1 > 0){
+                    //check top left the first else if to check promotions
+                    ChessPosition nextSpace = new ChessPosition(startRow +1, startCol -1);
+                    if ((board.getPiece(nextSpace) != null) && ((startRow + 1) < 8) ){
+                        if (board.getPiece(nextSpace).getTeamColor() != ChessGame.TeamColor.WHITE){
+                            ChessMove newMove = new ChessMove(startPosition,nextSpace,null);
+                            moves.add(newMove);
+                        }
+                    }
+                    else if ((board.getPiece(nextSpace) != null && ((startRow +1) == 8))){
+                        if (board.getPiece(nextSpace).getTeamColor() != ChessGame.TeamColor.WHITE){
+                            promotionMoves(moves,startPosition,nextSpace);
+                        }
+                    }
+                }
+                if (startCol +1 < 9){
+                    //top right
+                    ChessPosition nextSpace = new ChessPosition(startRow +1, startCol +1);
+                    if ((board.getPiece(nextSpace) != null) && ((startRow +1) < 8)){
+                        if (board.getPiece(nextSpace).getTeamColor() != ChessGame.TeamColor.WHITE){
+                            ChessMove newMove = new ChessMove(startPosition,nextSpace,null);
+                            moves.add(newMove);
+                        }
+                    }
+                    else if ((board.getPiece(nextSpace) != null && ((startRow +1) == 8))){
+                        if (board.getPiece(nextSpace).getTeamColor() != ChessGame.TeamColor.WHITE){
+                            promotionMoves(moves,startPosition,nextSpace);
+                        }
+                    }
+                }
+            }
+            //top move
+            ChessPosition nextSpace = new ChessPosition(startRow +1, startCol);
+            if (board.getPiece(nextSpace) == null && (startRow +1 < 8)){
+                ChessMove newMove = new ChessMove(startPosition,nextSpace,null);
+                moves.add(newMove);
+            }
+            else if(board.getPiece(nextSpace) == null && (startRow +1 == 8)){
+                promotionMoves(moves,startPosition,nextSpace);
+            }
+
+
+
+        }
+        else if (teamColor == ChessGame.TeamColor.BLACK){
+            if (startRow == 7){
+                ChessPosition nextSpace = new ChessPosition(startRow - 2, startCol);
+                ChessPosition front = new ChessPosition( startRow -1, startCol);
+                if (board.getPiece(nextSpace) == null && board.getPiece(front) == null){
+                    ChessMove newMove = new ChessMove(startPosition,nextSpace,null);
+                    moves.add(newMove);
+                }
+            }
+            if (startRow -1 > 0){
+                if(startCol -1 > 0){
+                    //bottom left
+                    ChessPosition nextSpace = new ChessPosition(startRow -1, startCol -1);
+                    if (board.getPiece(nextSpace) != null && startRow -1 > 1){
+                        if (board.getPiece(nextSpace).getTeamColor() != ChessGame.TeamColor.BLACK){
+                            ChessMove newMove = new ChessMove(startPosition,nextSpace,null);
+                            moves.add(newMove);
+                        }
+                    }
+                    else if (board.getPiece(nextSpace) != null && startRow -1 == 1){
+                        promotionMoves(moves,startPosition,nextSpace);
+                    }
+                }
+                if (startCol +1 < 9){
+                    //bottom right
+                    ChessPosition nextSpace = new ChessPosition(startRow -1, startCol +1);
+                    if (board.getPiece(nextSpace) != null && startRow +1 > 1){
+                        if (board.getPiece(nextSpace).getTeamColor() != ChessGame.TeamColor.BLACK){
+                            ChessMove newMove = new ChessMove(startPosition,nextSpace,null);
+                            moves.add(newMove);
+                        }
+                    }
+                    else if (board.getPiece(nextSpace) != null && startRow +1 == 1){
+                        promotionMoves(moves,startPosition,nextSpace);
+                    }
+                }
+                //bottom
+                ChessPosition nextSpace = new ChessPosition(startRow -1, startCol);
+                if (board.getPiece(nextSpace) == null && startRow -1 > 1){
+                    ChessMove newSpace = new ChessMove(startPosition,nextSpace,null);
+                    moves.add(newSpace);
+                }
+                else if (board.getPiece(nextSpace) == null && startRow -1 == 1){
+                    promotionMoves(moves,startPosition,nextSpace);
+                }
+            }
+        }
+
+        return moves;
+    }
+
+    /**
+     * Used to get all promotion moves for a pawn
+     * @param moves
+     * @param startPosition
+     * @param nextSpace
+     */
+    private void promotionMoves (Collection<ChessMove> moves, ChessPosition startPosition, ChessPosition nextSpace){
+        for (PieceType type : PieceType.values()){
+            if (type != PieceType.PAWN && type != PieceType.KING){
+                ChessMove newMove = new ChessMove(startPosition,nextSpace,type);
+                moves.add(newMove);
+            }
+        }
     }
 
     private Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition startPosition){
