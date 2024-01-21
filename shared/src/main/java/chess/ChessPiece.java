@@ -77,13 +77,61 @@ public class ChessPiece {
         moves = knightMoves(board,myPosition);
         }
         else if (type == PieceType.ROOK){
-
+        moves = rookMoves(board,myPosition);
         }
         else if (type == PieceType.PAWN){
         moves = pawnMoves(board,myPosition);
         }
         return moves;
         //throw new RuntimeException("Not implemented");
+    }
+
+    private Collection<ChessMove> rookMoves (ChessBoard board, ChessPosition startPosition){
+        Collection<ChessMove> moves = new ArrayList<ChessMove>();
+        int startRow = startPosition.getRow();
+        int startCol = startPosition.getColumn();
+
+        //top
+        int i = 1;
+        boolean isMore = true;
+        while(startRow + i < 9 && isMore){
+            ChessPosition nextSpace = new ChessPosition(startRow + i, startCol);
+            isMore = addMove(board,moves,startPosition,nextSpace);
+
+            i++;
+        }
+
+        // bottom
+        i = -1;
+        isMore = true;
+        while(startRow + i > 0 && isMore){
+            ChessPosition nextSpace = new ChessPosition(startRow + i, startCol);
+            isMore = addMove(board,moves,startPosition,nextSpace);
+
+            i--;
+        }
+
+        // right
+        int j = 1;
+        isMore = true;
+        while(startCol + j < 9 && isMore){
+            ChessPosition nextSpace = new ChessPosition(startRow, startCol + j);
+            isMore = addMove(board,moves,startPosition,nextSpace);
+
+            j++;
+        }
+
+        // left
+        j = -1;
+        isMore = true;
+        while(startCol + j > 0 && isMore){
+            ChessPosition nextSpace = new ChessPosition(startRow, startCol + j);
+            isMore = addMove(board,moves,startPosition,nextSpace);
+
+            j--;
+        }
+
+        return moves;
     }
 
     private Collection<ChessMove> queenMoves (ChessBoard board, ChessPosition startPosition){
