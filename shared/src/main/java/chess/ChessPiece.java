@@ -61,8 +61,7 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> moves = new ArrayList<ChessMove>();
-        int startRow = myPosition.getRow();
-        int startCol = myPosition.getColumn();
+
         if(type == PieceType.KING ){
         moves = kingMoves(board,myPosition);
         }

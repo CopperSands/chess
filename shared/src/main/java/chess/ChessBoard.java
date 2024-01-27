@@ -55,9 +55,7 @@ public class ChessBoard {
         int row = position.getRow();
         ChessPiece piece = chessBoard[row][col];
 
-        //ChessPiece piece = piecesMap.get(position);
         return piece;
-        //throw new RuntimeException("Not implemented");
     }
 
     /**
