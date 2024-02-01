@@ -35,11 +35,12 @@ public class ChessBoard {
      * In tests values will start at 1 and end at 8
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        int col = position.getColumn();
-        int row = position.getRow();
-        if (row <= 8 && col <= 8) {
-            chessBoard[row][col] = piece;
-        }
+            int col = position.getColumn();
+            int row = position.getRow();
+            if (row <= 8 && col <= 8) {
+                chessBoard[row][col] = piece;
+            }
+
     }
 
     /**
