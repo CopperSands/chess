@@ -1,6 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -52,22 +54,42 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        Collection<ChessMove> moves;
+        Collection<ChessMove> moves = board.getPiece(startPosition).pieceMoves(board,startPosition);
+        Collection<ChessMove> validMoves = new ArrayList<ChessMove>();
         //check that all valid moves for a white piece
+        ChessPiece piece = board.getPiece(startPosition);
         ChessPosition kingPos = getKingPos(teamTurn);
-        if (teamTurn == TeamColor.WHITE){
 
+        //loop through all possible moves
+        for (Iterator<ChessMove> iterator = moves.iterator(); iterator.hasNext();){
+            ChessMove nextMove = iterator.next();
+            //System.out.println("this is a move" + nextMove);
+            ChessPosition nextSpace = nextMove.getEndPosition();
+            board.addPiece(nextSpace,piece);
+            board.addPiece(startPosition,null);
+
+            //check if team's king is in check
+            if (!isInCheck(teamTurn)){
+                validMoves.add(nextMove);
+            }
+
+
+            //cleanup
+            board.addPiece(startPosition,piece);
+            board.addPiece(nextSpace,null);
 
         }
-        else if(teamTurn == TeamColor.BLACK){
 
-        }
 
-        moves = board.getPiece(startPosition).pieceMoves(board,startPosition);
 
-        return moves;
+        return validMoves;
     }
 
+    /**
+     * used to find the position of a team's king
+     * @param teamColor
+     * @return
+     */
     private ChessPosition getKingPos(TeamColor teamColor){
         ChessPosition kingPos = null;
         for (int i = 1; i < 9; i++){
@@ -113,14 +135,34 @@ public class ChessGame {
 
     /**
      * Determines if the given team is in check
-     *
+     * This is done by looping over the whole board. If a piece on the opposite team
+     * can capture the king then true is returned
      * @param teamColor which team to check for check
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor)
     {
+        boolean isChecked = false;
+        ChessPosition kingPos = getKingPos(teamColor);
+        for(int i = 1; i < 9; i++){
+            for (int j = 1; j < 9; j++){
+                ChessPosition position = new ChessPosition(i,j);
+                ChessPiece piece = board.getPiece(position);
+                if (piece != null){
+                   if (piece.getTeamColor() != teamColor){
+                       Collection<ChessMove> oMoves = piece.pieceMoves(board,position);
+                       for(Iterator<ChessMove> iterator = oMoves.iterator(); iterator.hasNext();){
+                           ChessMove oMove = iterator.next();
+                           if (kingPos == oMove.getEndPosition()){
+                               isChecked = true;
+                           }
+                       }
+                   }
+                }
+            }
+        }
 
-        throw new RuntimeException("Not implemented");
+        return isChecked;
     }
 
     /**
