@@ -170,7 +170,7 @@ public class ChessGame {
                        Collection<ChessMove> oMoves = piece.pieceMoves(board,position);
                        for(Iterator<ChessMove> iterator = oMoves.iterator(); iterator.hasNext();){
                            ChessMove oMove = iterator.next();
-                           if (kingPos == oMove.getEndPosition()){
+                           if (kingPos.equals(oMove.getEndPosition())){
                                isChecked = true;
                            }
                        }
