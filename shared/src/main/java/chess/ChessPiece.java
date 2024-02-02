@@ -323,13 +323,13 @@ public class ChessPiece {
                 if (startCol +1 < 9){
                     //bottom right
                     ChessPosition nextSpace = new ChessPosition(startRow -1, startCol +1);
-                    if (board.getPiece(nextSpace) != null && startRow +1 > 1){
+                    if (board.getPiece(nextSpace) != null && startRow -1 > 1){
                         if (board.getPiece(nextSpace).getTeamColor() != ChessGame.TeamColor.BLACK){
                             ChessMove newMove = new ChessMove(startPosition,nextSpace,null);
                             moves.add(newMove);
                         }
                     }
-                    else if (board.getPiece(nextSpace) != null && startRow +1 == 1){
+                    else if (board.getPiece(nextSpace) != null && startRow -1 == 1){
                         promotionMoves(moves,startPosition,nextSpace);
                     }
                 }

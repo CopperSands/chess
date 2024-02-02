@@ -123,8 +123,13 @@ public class ChessGame {
             if (validMoves.contains(move)){
                 ChessPiece piece = board.getPiece(move.getStartPosition());
                 if (piece.getTeamColor() == teamTurn) {
-
-                    board.addPiece(move.getEndPosition(), piece);
+                    if (move.getPromotionPiece() == null) {
+                        board.addPiece(move.getEndPosition(), piece);
+                    }
+                    else{
+                        ChessPiece proPiece = new ChessPiece(teamTurn,move.getPromotionPiece());
+                        board.addPiece(move.getEndPosition(),proPiece);
+                    }
                     board.addPiece(move.getStartPosition(), null);
                     nextPlayerTurn();
                 }
@@ -161,24 +166,25 @@ public class ChessGame {
     {
         boolean isChecked = false;
         ChessPosition kingPos = getKingPos(teamColor);
-        for(int i = 1; i < 9; i++){
-            for (int j = 1; j < 9; j++){
-                ChessPosition position = new ChessPosition(i,j);
-                ChessPiece piece = board.getPiece(position);
-                if (piece != null){
-                   if (piece.getTeamColor() != teamColor){
-                       Collection<ChessMove> oMoves = piece.pieceMoves(board,position);
-                       for(Iterator<ChessMove> iterator = oMoves.iterator(); iterator.hasNext();){
-                           ChessMove oMove = iterator.next();
-                           if (kingPos.equals(oMove.getEndPosition())){
-                               isChecked = true;
-                           }
-                       }
-                   }
+        if (kingPos != null) {
+            for (int i = 1; i < 9; i++) {
+                for (int j = 1; j < 9; j++) {
+                    ChessPosition position = new ChessPosition(i, j);
+                    ChessPiece piece = board.getPiece(position);
+                    if (piece != null) {
+                        if (piece.getTeamColor() != teamColor) {
+                            Collection<ChessMove> oMoves = piece.pieceMoves(board, position);
+                            for (Iterator<ChessMove> iterator = oMoves.iterator(); iterator.hasNext(); ) {
+                                ChessMove oMove = iterator.next();
+                                if (kingPos.equals(oMove.getEndPosition())) {
+                                    isChecked = true;
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
-
         return isChecked;
     }
 
