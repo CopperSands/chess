@@ -65,6 +65,7 @@ public class ChessGame {
             ChessMove nextMove = iterator.next();
             //System.out.println("this is a move" + nextMove);
             ChessPosition nextSpace = nextMove.getEndPosition();
+            ChessPiece pieceAtNext = board.getPiece(nextSpace);
             board.addPiece(nextSpace,piece);
             board.addPiece(startPosition,null);
 
@@ -76,7 +77,7 @@ public class ChessGame {
 
             //cleanup
             board.addPiece(startPosition,piece);
-            board.addPiece(nextSpace,null);
+            board.addPiece(nextSpace,pieceAtNext);
 
         }
 
@@ -121,8 +122,15 @@ public class ChessGame {
         if ( validMoves != null){
             if (validMoves.contains(move)){
                 ChessPiece piece = board.getPiece(move.getStartPosition());
-                board.addPiece(move.getEndPosition(),piece);
-                board.addPiece(move.getStartPosition(),null);
+                if (piece.getTeamColor() == teamTurn) {
+
+                    board.addPiece(move.getEndPosition(), piece);
+                    board.addPiece(move.getStartPosition(), null);
+                    nextPlayerTurn();
+                }
+                else {
+                    throw new InvalidMoveException("not your turn");
+                }
             }
             else {
                 throw new InvalidMoveException("move is invalid");
@@ -130,6 +138,15 @@ public class ChessGame {
         }
         else {
             throw new InvalidMoveException("move is invalid");
+        }
+    }
+
+    private void nextPlayerTurn(){
+        if (teamTurn == TeamColor.WHITE){
+            teamTurn = TeamColor.BLACK;
+        }
+        else{
+            teamTurn = TeamColor.WHITE;
         }
     }
 
