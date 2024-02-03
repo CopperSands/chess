@@ -58,7 +58,7 @@ public class ChessGame {
         Collection<ChessMove> validMoves = new ArrayList<ChessMove>();
         //check that all valid moves for a white piece
         ChessPiece piece = board.getPiece(startPosition);
-        ChessPosition kingPos = getKingPos(teamTurn);
+
 
         //loop through all possible moves
         for (Iterator<ChessMove> iterator = moves.iterator(); iterator.hasNext();){
@@ -70,7 +70,7 @@ public class ChessGame {
             board.addPiece(startPosition,null);
 
             //check if team's king is in check
-            if (!isInCheck(teamTurn)){
+            if (!isInCheck(piece.getTeamColor())){
                 validMoves.add(nextMove);
             }
 
