@@ -36,7 +36,7 @@ public interface GameDAO {
      * @param gameID
      * @param updatedGame
      */
-    public void updateGame(String gameID, GameData updatedGame) throws DataAccessException;
+    public void updateGame(int gameID, GameData updatedGame) throws DataAccessException;
 
 
     /**
