@@ -15,7 +15,7 @@ public interface GameDAO {
      * @param gameName
      * @param game
      */
-    public void createGame(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game);
+    public void createGame(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game) throws DataAccessException;
 
 
     /**
@@ -23,24 +23,24 @@ public interface GameDAO {
      * @param gameID
      * @return GameData record
      */
-    public GameData getGame(int gameID);
+    public GameData getGame(int gameID) throws DataAccessException;
 
     /**
      * Get all games
      * @return Collection of GameData
      */
-    public Collection<GameData> listGames();
+    public Collection<GameData> listGames() throws DataAccessException;
 
     /**
      * Takes in a gameID and GameData object to update the game
      * @param gameID
      * @param updatedGame
      */
-    public void updateGame(String gameID, GameData updatedGame);
+    public void updateGame(String gameID, GameData updatedGame) throws DataAccessException;
 
 
     /**
      * Clears all Game data
      */
-    public void clear();
+    public void clear() throws DataAccessException;
 }

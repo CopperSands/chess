@@ -9,7 +9,7 @@ public interface AuthDAO {
      * @param authToken
      * @param username
      */
-    public void createAuth(String authToken,String username);
+    public void createAuth(String authToken,String username) throws DataAccessException;
 
 
     /**
@@ -17,13 +17,13 @@ public interface AuthDAO {
      * @param authToken
      * @return AuthData object
      */
-    public AuthData getAuth(AuthData authToken);
+    public AuthData getAuth(AuthData authToken) throws DataAccessException;
 
     /**
      * Delete an auth Token given an authToken
      * @param authToken
      */
-    public void deleteAuth(AuthData authToken);
+    public void deleteAuth(AuthData authToken) throws DataAccessException;
 
 
 }
