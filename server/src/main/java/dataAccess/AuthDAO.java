@@ -17,7 +17,7 @@ public interface AuthDAO {
      * @param authToken
      * @return AuthData object
      */
-    public AuthData getAuth(AuthData authToken) throws DataAccessException;
+    public AuthData getAuth(String authToken) throws DataAccessException;
 
     /**
      * Delete an auth Token given an authToken
