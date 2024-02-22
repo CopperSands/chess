@@ -8,7 +8,7 @@ public class LocalAuthDAO implements AuthDAO{
 
     private HashMap <String, AuthData> authTokens;
 
-    LocalAuthDAO(){
+    public LocalAuthDAO(){
         authTokens = new HashMap<String,AuthData>();
     }
 

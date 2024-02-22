@@ -8,7 +8,7 @@ public class LocalUserDAO implements UserDAO{
 
     private HashMap<String,UserData> users;
 
-    LocalUserDAO(){
+    public LocalUserDAO(){
         users = new HashMap<String,UserData>();
     }
 
