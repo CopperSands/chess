@@ -7,33 +7,32 @@ import model.UserData;
 import java.time.LocalDateTime;
 import java.util.Random;
 
-public class registerService {
+public class RegisterService {
 
-    private UserData userData;
+
     private String authToken;
     private UserDAO userDAO;
     private AuthDAO authDAO;
 
 
-    public registerService(String username, String password,String email){
-        userData = new UserData(username,password,email);
+    public RegisterService(){
         userDAO = new LocalUserDAO();
         authDAO = new LocalAuthDAO();
     }
 
-    public AuthData register() throws DataAccessException{
+    public AuthData register(String username, String password, String email) throws DataAccessException{
         //check if user exits
         try {
 
-            if(isUsernameTaken(userData.username())){
+            if(isUsernameTaken(username)){
                 throw new DataAccessException("Error username is taken");
             }
 
-            userDAO.createUser(userData.username(), userData.password(), userData.email());
+            userDAO.createUser(username, password, email);
 
             //create new authToken and insert into database
             authToken = createAuthToken();
-            AuthData token = new AuthData(authToken, userData.username());
+            AuthData token = new AuthData(authToken, username);
             authDAO.createAuth(token.authToken(),token.username());
 
             return token;
@@ -52,8 +51,8 @@ public class registerService {
     private boolean isUsernameTaken(String username) throws DataAccessException {
         try{
             boolean isTaken = false;
-            UserData user = userDAO.getUser(userData.username());
-            if(user == null){
+            UserData user = userDAO.getUser(username);
+            if(user != null){
                 isTaken = true;
             }
             return isTaken;

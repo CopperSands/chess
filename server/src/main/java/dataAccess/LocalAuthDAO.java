@@ -52,4 +52,14 @@ public class LocalAuthDAO implements AuthDAO{
             throw new DataAccessException(e.getMessage());
         }
     }
+
+    @Override
+    public void clear() throws DataAccessException {
+        try{
+            authTokens.clear();
+        }catch(Exception e){
+            throw new DataAccessException("Error clearing authTokens " + e.getMessage());
+        }
+
+    }
 }

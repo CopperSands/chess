@@ -25,5 +25,11 @@ public interface AuthDAO {
      */
     public void deleteAuth(AuthData authToken) throws DataAccessException;
 
+    /**
+     * Clears all authTokens
+     * @throws DataAccessException
+     */
+    public void clear()throws DataAccessException;
+
 
 }
