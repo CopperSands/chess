@@ -74,5 +74,29 @@ public class LoginServiceTest {
 
     }
 
+    @Test
+    public void badUsername(){
+        try{
+            loginService = new LoginService();
+            authDAO = loginService.getAuthDAO();
+            userDAO = loginService.getUserDAO();
+            //populate tables
+            userDAO.createUser(user.username(), HashPassword.hashPassword(user.password()),user.email());
+            authDAO.createAuth(authData.authToken(),authData.username());
+
+            try{
+                loginService.login(user1.username(),"not the password");
+
+            }catch(DataAccessException e){
+                DataAccessException expected = new DataAccessException("Error user does not exit");
+                assertEquals(expected.getClass(),e.getClass());
+                assertEquals(expected.getMessage(),e.getMessage());
+            }
+
+        }catch(Exception e){
+            assertNull(e);
+        }
+    }
+
 
 }
