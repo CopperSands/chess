@@ -9,13 +9,9 @@ public interface GameDAO {
 
     /**
      * Creates a new game
-     * @param gameID
-     * @param whiteUsername
-     * @param blackUsername
-     * @param gameName
-     * @param game
+     * when given gameData
      */
-    public void createGame(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game) throws DataAccessException;
+    public void createGame(GameData gameData) throws DataAccessException;
 
 
     /**

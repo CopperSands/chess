@@ -11,8 +11,8 @@ import java.util.Arrays;
 
 public class LoginService {
 
-    UserDAO userDAO;
-    AuthDAO authDAO;
+    private UserDAO userDAO;
+    private AuthDAO authDAO;
 
     public LoginService(){
         userDAO = new LocalUserDAO();

@@ -9,21 +9,20 @@ public class LocalGameDAO implements GameDAO{
 
     private HashMap<Integer,GameData> games;
 
-    LocalGameDAO(){
+    public LocalGameDAO(){
         games = new HashMap<Integer,GameData>();
     }
 
     @Override
-    public void createGame(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game) throws DataAccessException {
+    public void createGame(GameData gameData) throws DataAccessException {
 
         //if the game already exits throw error
-        if (games.containsKey(gameID)){
+        if (games.containsKey(gameData.gameID())){
             throw new DataAccessException("game already in play");
         }
         else{
-            GameData gameData = new GameData(gameID,whiteUsername,blackUsername,gameName,game);
             try{
-                games.put(gameID,gameData);
+                games.put(gameData.gameID(), gameData);
             }catch(Exception e){
                 throw new DataAccessException(e.getMessage());
             }
