@@ -22,6 +22,14 @@ public class RegisterService {
         authDAO = new LocalAuthDAO();
     }
 
+    /**
+     * Registers user and returns authData
+     * @param username
+     * @param password
+     * @param email
+     * @return
+     * @throws DataAccessException
+     */
     public AuthData register(String username, String password, String email) throws DataAccessException{
         //check if user exits
         try {
@@ -67,6 +75,12 @@ public class RegisterService {
 
     }
 
+    //set the following to private after testing
+    public UserDAO getUserDAO() {
+        return userDAO;
+    }
 
-
+    public AuthDAO getAuthDAO() {
+        return authDAO;
+    }
 }
