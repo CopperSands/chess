@@ -14,19 +14,16 @@ public class LocalGameDAO implements GameDAO{
     }
 
     @Override
-    public void createGame(GameData gameData) throws DataAccessException {
-
-        //if the game already exits throw error
-        if (games.containsKey(gameData.gameID())){
-            throw new DataAccessException("game already in play");
-        }
-        else{
+    public int createGame(String whiteUsername, String blackUsername, String gameName, ChessGame game) throws DataAccessException {
+        //if the game alreadyString whiteUsername, String blackUsername, String gameName, ChessGame game exits throw error
+        int gameID = games.size() + 1;
+        GameData gameData = new GameData(gameID,whiteUsername,blackUsername,gameName, game);
             try{
-                games.put(gameData.gameID(), gameData);
+                games.put(gameID, gameData);
             }catch(Exception e){
                 throw new DataAccessException(e.getMessage());
             }
-        }
+        return gameID;
     }
 
     @Override

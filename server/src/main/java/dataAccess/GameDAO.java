@@ -11,7 +11,7 @@ public interface GameDAO {
      * Creates a new game
      * when given gameData
      */
-    public void createGame(GameData gameData) throws DataAccessException;
+    public int createGame(String whiteUsername, String blackUsername, String gameName, ChessGame game) throws DataAccessException;
 
 
     /**

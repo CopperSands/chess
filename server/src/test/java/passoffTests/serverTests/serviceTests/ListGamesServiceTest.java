@@ -34,9 +34,9 @@ public class ListGamesServiceTest {
         try{
             //populate data
             authDAO.createAuth(authData.authToken(),authData.username());
-            gameDAO.createGame(game);
-            gameDAO.createGame(game1);
-            gameDAO.createGame(game2);
+            gameDAO.createGame(game.whiteUsername(),game.blackUsername(), game.gameName(),game.game());
+            gameDAO.createGame(game1.whiteUsername(),game1.blackUsername(),game1.gameName(),game1.game());
+            gameDAO.createGame(game2.whiteUsername(),game2.blackUsername(),game2.gameName(),game2.game());
 
             Collection<GameData> result = listGamesService.listGames(authData);
             assertNotNull(result);
@@ -60,9 +60,9 @@ public class ListGamesServiceTest {
         try{
             //populate data
             authDAO.createAuth(authData.authToken(),authData.username());
-            gameDAO.createGame(game);
-            gameDAO.createGame(game1);
-            gameDAO.createGame(game2);
+            gameDAO.createGame(game.whiteUsername(),game.blackUsername(),game.gameName(),game.game());
+            gameDAO.createGame(game1.whiteUsername(), game1.blackUsername(),game1.gameName(),game1.game());
+            gameDAO.createGame(game2.whiteUsername(), game2.blackUsername(),game2.gameName(),game2.game());
             AuthData badData = new AuthData("nope", "nope");
             try{
                 Collection<GameData> result = listGamesService.listGames(badData);
