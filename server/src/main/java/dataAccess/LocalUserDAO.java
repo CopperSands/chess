@@ -13,14 +13,14 @@ public class LocalUserDAO implements UserDAO{
     }
 
     @Override
-    public void createUser(String username, String password, String email) throws DataAccessException {
+    public void createUser(String username, String passwordHash, String email) throws DataAccessException {
 
         //If the user is already created throw an error
         if (users.containsKey(username)){
             throw new DataAccessException("user already exits");
         }
         else{
-            UserData user = new UserData(username,password,email);
+            UserData user = new UserData(username,passwordHash,email);
             try{
                 users.put(username,user);
             }catch(Exception e){
