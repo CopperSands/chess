@@ -14,6 +14,11 @@ public class CreateGameService {
         gameDAO = new LocalGameDAO();
 
     }
+    //for phase3
+    public CreateGameService(AuthDAO authDAO, GameDAO gameDAO){
+        this.authDAO = authDAO;
+        this.gameDAO = gameDAO;
+    }
 
     public int CreateGame(AuthData authToken, String gameName) throws  DataAccessException{
         int gameID;

@@ -21,6 +21,11 @@ public class RegisterService {
         userDAO = new LocalUserDAO();
         authDAO = new LocalAuthDAO();
     }
+    //for phase3
+    public RegisterService(UserDAO userDAO, AuthDAO authDAO){
+        this.userDAO = userDAO;
+        this.authDAO = authDAO;
+    }
 
     /**
      * Registers user and returns authData

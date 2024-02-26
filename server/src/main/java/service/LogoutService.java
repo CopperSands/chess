@@ -13,6 +13,11 @@ public class LogoutService {
         authDAO = new LocalAuthDAO();
     }
 
+    //this is for phase3
+    public LogoutService(AuthDAO authDAO){
+        this.authDAO = authDAO;
+    }
+
     public void logout(AuthData authToken) throws DataAccessException{
         try{
             AuthData result = authDAO.getAuth(authToken.authToken());

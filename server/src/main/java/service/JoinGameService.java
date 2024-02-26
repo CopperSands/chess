@@ -16,6 +16,11 @@ public class JoinGameService {
         authDAO = new LocalAuthDAO();
         gameDAO = new LocalGameDAO();
     }
+    //for phase3
+    public JoinGameService(AuthDAO authDAO,GameDAO gameDAO){
+        this.authDAO = authDAO;
+        this.gameDAO = gameDAO;
+    }
 
     public void joinGame(AuthData authToken, String clientColor, int gameID)throws DataAccessException {
         try{

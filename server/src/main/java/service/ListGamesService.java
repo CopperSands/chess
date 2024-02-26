@@ -16,6 +16,11 @@ public class ListGamesService {
         gameDAO = new LocalGameDAO();
 
     }
+    //for phase3
+    public ListGamesService(AuthDAO authDAO,GameDAO gameDAO){
+        this.authDAO = authDAO;
+        this.gameDAO = gameDAO;
+    }
 
     public Collection<GameData> listGames(AuthData authToken) throws DataAccessException {
         //check authentication

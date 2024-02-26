@@ -18,6 +18,11 @@ public class LoginService {
         userDAO = new LocalUserDAO();
         authDAO = new LocalAuthDAO();
     }
+    //for phase3
+    public LoginService(UserDAO userDAO, AuthDAO authDAO){
+        this.userDAO = userDAO;
+        this.authDAO = authDAO;
+    }
 
     /**
      * Logs user in and returns authData
