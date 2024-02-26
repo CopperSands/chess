@@ -107,8 +107,7 @@ public class Server {
             logoutService.logout(authToken);
             return "";
         }catch (DataAccessException e){
-            if (e.getMessage() == "Error unauthorized"){
-                //this is a bad logout
+            if (e.getMessage() == "Error unauthorized" || false){
                 res.status(401);
             }else{
                 res.status(500);

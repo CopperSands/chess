@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class RegisterServiceTests {
 
-    private RegisterService regService;
+    private RegisterService registerService;
     private static UserDAO userDAO;
     private static AuthDAO authDAO;
 
@@ -21,12 +21,12 @@ public class RegisterServiceTests {
     @Test
     @DisplayName("valid registration 1 user")
     public void validRegistration() {
-        regService = new RegisterService();
-        userDAO = regService.getUserDAO();
-        authDAO = regService.getAuthDAO();
+        registerService = new RegisterService();
+        userDAO = registerService.getUserDAO();
+        authDAO = registerService.getAuthDAO();
 
         try {
-            regService.register(user.username(), user.password(),user.email());
+            registerService.register(user.username(), user.password(),user.email());
             UserData returnedUser = userDAO.getUser(user.username());
             assertNotNull(returnedUser);
             assertEquals(user.email(),returnedUser.email());
@@ -40,11 +40,11 @@ public class RegisterServiceTests {
     @Test
     @DisplayName("valid multiple registrations")
     public void validMultiRegistration(){
-        regService = new RegisterService();
+        registerService = new RegisterService();
         try {
-            regService.register(user.username(), user.password(),user.email());
-            regService.register(user1.username(), user1.password(),user1.email());
-            regService.register(user2.username(), user2.password(),user2.email());
+            registerService.register(user.username(), user.password(),user.email());
+            registerService.register(user1.username(), user1.password(),user1.email());
+            registerService.register(user2.username(), user2.password(),user2.email());
         }catch(DataAccessException e){
             assertNull(e);
         }
@@ -53,10 +53,10 @@ public class RegisterServiceTests {
     @Test
     @DisplayName("fail username already taken")
     public void failRegistrationUsernameTaken(){
-        regService = new RegisterService();
+        registerService = new RegisterService();
         try {
-            regService.register(user.username(), user.password(),user.email());
-            regService.register(user.username(), user.password(),user.email());
+            registerService.register(user.username(), user.password(),user.email());
+            registerService.register(user.username(), user.password(),user.email());
         }catch(DataAccessException e){
             DataAccessException expected = new DataAccessException("Error username is taken");
             assertEquals(expected.getClass(),e.getClass());
