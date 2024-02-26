@@ -122,7 +122,8 @@ public class Server {
         String authToken = req.headers("authorization");
         try{
             Collection <GameData> games = listGamesService.listGames(authToken);
-            return gson.toJson(games);
+            GameListRes gameRes = new GameListRes(games);
+            return gson.toJson(gameRes);
 
         }catch (DataAccessException e){
             if (e.getMessage() == "Error unauthorized"){

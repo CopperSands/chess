@@ -5,6 +5,8 @@ import dataAccess.*;
 import model.AuthData;
 import model.GameData;
 
+import java.nio.charset.StandardCharsets;
+
 
 public class JoinGameService {
 
@@ -48,12 +50,12 @@ public class JoinGameService {
 
     private boolean isTeamTaken(String clientColor){
         boolean isTaken = false;
-        if (clientColor == "WHITE"){
+        if (clientColor.equals("WHITE")){
             if (game.whiteUsername() != null){
                 isTaken = true;
             }
         }
-        else if (clientColor == "BLACK"){
+        else if (clientColor.equals("BLACK")){
             if (game.blackUsername() != null){
                 isTaken = true;
             }
@@ -63,10 +65,10 @@ public class JoinGameService {
     }
 
     private void updateGameData(String username, String clientColor) throws DataAccessException{
-        if (clientColor == "WHITE"){
+        if (clientColor.equals("WHITE")){
             game = new GameData(game.gameID(),username, game.blackUsername(),game.gameName(),game.game());
         }
-        else if (clientColor == "BLACK"){
+        else if (clientColor.equals("BLACK")){
             game = new GameData(game.gameID(),game.whiteUsername(),username,game.gameName(),game.game());
         }
         else{
