@@ -1,6 +1,7 @@
 package passoffTests.serverTests.serviceTests;
 
 import dataAccess.*;
+import model.AuthData;
 import model.UserData;
 import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.*;
@@ -26,10 +27,14 @@ public class RegisterServiceTests {
         authDAO = registerService.getAuthDAO();
 
         try {
-            registerService.register(user.username(), user.password(),user.email());
+            AuthData token = registerService.register(user.username(), user.password(),user.email());
             UserData returnedUser = userDAO.getUser(user.username());
             assertNotNull(returnedUser);
             assertEquals(user.email(),returnedUser.email());
+            assertNotNull(token);
+            AuthData foundToken = authDAO.getAuth(token.authToken());
+            assertNotNull(foundToken);
+            assertEquals(token.username(),foundToken.username());
         }catch(DataAccessException e){
             assertNull(e);
         }
