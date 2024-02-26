@@ -31,8 +31,4 @@ public class LogoutService {
             throw new DataAccessException(e.getMessage());
         }
     }
-//change to private after testing
-    public AuthDAO getAuthDAO() {
-        return authDAO;
-    }
 }

@@ -59,12 +59,4 @@ public class LoginService {
             throw new DataAccessException(e.getMessage());
         }
     }
-    //set the following to private after testing
-    public UserDAO getUserDAO() {
-        return userDAO;
-    }
-
-    public AuthDAO getAuthDAO() {
-        return authDAO;
-    }
 }

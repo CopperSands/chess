@@ -76,12 +76,4 @@ public class JoinGameService {
             throw new DataAccessException("Error invalid team color");
         }
     }
-// change the following to private after testing
-    public AuthDAO getAuthDAO() {
-        return authDAO;
-    }
-
-    public GameDAO getGameDAO() {
-        return gameDAO;
-    }
 }

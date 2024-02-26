@@ -2,6 +2,7 @@ package passoffTests.serverTests.serviceTests;
 
 import dataAccess.AuthDAO;
 import dataAccess.DataAccessException;
+import dataAccess.LocalAuthDAO;
 import model.AuthData;
 import org.junit.jupiter.api.Test;
 import service.LogoutService;
@@ -18,8 +19,8 @@ public class LogoutServiceTest {
 
     @Test
     public void validLogout(){
-        logoutService = new LogoutService();
-        authDAO = logoutService.getAuthDAO();
+        authDAO = new LocalAuthDAO();
+        logoutService = new LogoutService(authDAO);
         try{
             //populate authDAO
             String authToken = AuthString.createAuthToken();
@@ -36,8 +37,8 @@ public class LogoutServiceTest {
 
     @Test
     public void failLogout(){
+        authDAO = new LocalAuthDAO();
         logoutService = new LogoutService();
-        authDAO = logoutService.getAuthDAO();
         try{
             //populate authDAO
             String authToken = AuthString.createAuthToken();

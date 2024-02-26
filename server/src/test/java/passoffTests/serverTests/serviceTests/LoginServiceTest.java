@@ -1,8 +1,6 @@
 package passoffTests.serverTests.serviceTests;
 
-import dataAccess.AuthDAO;
-import dataAccess.DataAccessException;
-import dataAccess.UserDAO;
+import dataAccess.*;
 import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.BeforeAll;
@@ -30,9 +28,9 @@ public class LoginServiceTest {
     @Test
     public void validLogin(){
         try{
-            loginService = new LoginService();
-            authDAO = loginService.getAuthDAO();
-            userDAO = loginService.getUserDAO();
+            authDAO = new LocalAuthDAO();
+            userDAO = new LocalUserDAO();
+            loginService = new LoginService(userDAO,authDAO);
             //populate tables
             userDAO.createUser(user.username(), HashPassword.hashPassword(user.password()),user.email());
             authDAO.createAuth(authData.authToken(),authData.username());
@@ -52,9 +50,9 @@ public class LoginServiceTest {
     @Test
     public void badPassword(){
         try{
-            loginService = new LoginService();
-            authDAO = loginService.getAuthDAO();
-            userDAO = loginService.getUserDAO();
+            authDAO = new LocalAuthDAO();
+            userDAO = new LocalUserDAO();
+            loginService = new LoginService(userDAO,authDAO);
             //populate tables
             userDAO.createUser(user.username(), HashPassword.hashPassword(user.password()),user.email());
             authDAO.createAuth(authData.authToken(),authData.username());
@@ -77,9 +75,9 @@ public class LoginServiceTest {
     @Test
     public void badUsername(){
         try{
-            loginService = new LoginService();
-            authDAO = loginService.getAuthDAO();
-            userDAO = loginService.getUserDAO();
+            authDAO = new LocalAuthDAO();
+            userDAO = new LocalUserDAO();
+            loginService = new LoginService(userDAO,authDAO);
             //populate tables
             userDAO.createUser(user.username(), HashPassword.hashPassword(user.password()),user.email());
             authDAO.createAuth(authData.authToken(),authData.username());

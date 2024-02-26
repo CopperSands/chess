@@ -59,7 +59,6 @@ public class RegisterService {
         }catch (DataAccessException e){
             throw new DataAccessException(e.getMessage());
         }
-
     }
 
     /**
@@ -80,15 +79,5 @@ public class RegisterService {
         } catch (DataAccessException e){
             throw new DataAccessException(e.getMessage());
         }
-
-    }
-
-    //set the following to private after testing
-    public UserDAO getUserDAO() {
-        return userDAO;
-    }
-
-    public AuthDAO getAuthDAO() {
-        return authDAO;
     }
 }

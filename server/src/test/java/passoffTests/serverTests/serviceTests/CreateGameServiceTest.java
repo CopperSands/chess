@@ -1,9 +1,7 @@
 package passoffTests.serverTests.serviceTests;
 
 import chess.ChessGame;
-import dataAccess.AuthDAO;
-import dataAccess.DataAccessException;
-import dataAccess.GameDAO;
+import dataAccess.*;
 import model.AuthData;
 import model.GameData;
 import org.junit.jupiter.api.Test;
@@ -21,9 +19,9 @@ public class CreateGameServiceTest {
 
     @Test
     public void validGameCreation(){
-        createGameService = new CreateGameService();
-        authDAO = createGameService.getAuthDAO();
-        gameDAO = createGameService.getGameDAO();
+        authDAO = new LocalAuthDAO();
+        gameDAO = new LocalGameDAO();
+        createGameService = new CreateGameService(authDAO,gameDAO);
         try{
             authDAO.createAuth(authData.authToken(),authData.username());
 

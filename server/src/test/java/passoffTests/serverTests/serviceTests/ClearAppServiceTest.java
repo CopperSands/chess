@@ -1,10 +1,7 @@
 package passoffTests.serverTests.serviceTests;
 
 import chess.ChessGame;
-import dataAccess.AuthDAO;
-import dataAccess.DataAccessException;
-import dataAccess.GameDAO;
-import dataAccess.UserDAO;
+import dataAccess.*;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -36,10 +33,10 @@ public class ClearAppServiceTest {
 
     @Test
     public void validClearing(){
-        clearAppService = new ClearAppService();
-        authDAO = clearAppService.getAuthDAO();
-        userDAO = clearAppService.getUserDAO();
-        gameDAO = clearAppService.getGameDAO();
+        authDAO = new LocalAuthDAO();
+        userDAO = new LocalUserDAO();
+        gameDAO = new LocalGameDAO();
+        clearAppService = new ClearAppService(authDAO,userDAO,gameDAO);
 
         try{
             //populate the databases

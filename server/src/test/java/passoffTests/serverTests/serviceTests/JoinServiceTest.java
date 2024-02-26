@@ -1,9 +1,7 @@
 package passoffTests.serverTests.serviceTests;
 
 import chess.ChessGame;
-import dataAccess.AuthDAO;
-import dataAccess.DataAccessException;
-import dataAccess.GameDAO;
+import dataAccess.*;
 import model.AuthData;
 import model.GameData;
 import org.junit.jupiter.api.Test;
@@ -21,9 +19,9 @@ public class JoinServiceTest {
 
     @Test
     public void validJoin(){
-        joinGameService = new JoinGameService();
-        authDAO = joinGameService.getAuthDAO();
-        gameDAO = joinGameService.getGameDAO();
+        authDAO = new LocalAuthDAO();
+        gameDAO = new LocalGameDAO();
+        joinGameService = new JoinGameService(authDAO,gameDAO);
 
         try{
             authDAO.createAuth(authData.authToken(),authData.username());
@@ -46,10 +44,9 @@ public class JoinServiceTest {
 
     @Test
     public void badAuth(){
-        joinGameService = new JoinGameService();
-        authDAO = joinGameService.getAuthDAO();
-        gameDAO = joinGameService.getGameDAO();
-
+        authDAO = new LocalAuthDAO();
+        gameDAO = new LocalGameDAO();
+        joinGameService = new JoinGameService(authDAO,gameDAO);
         try{
             int gameID = gameDAO.createGame(null,null,"game1",new ChessGame());
             joinGameService.joinGame(authData.authToken(),"BLACK",gameID);
@@ -62,10 +59,9 @@ public class JoinServiceTest {
 
     @Test
     public void teamAlreadyTaken(){
-        joinGameService = new JoinGameService();
-        authDAO = joinGameService.getAuthDAO();
-        gameDAO = joinGameService.getGameDAO();
-
+        authDAO = new LocalAuthDAO();
+        gameDAO = new LocalGameDAO();
+        joinGameService = new JoinGameService(authDAO,gameDAO);
         try{
             authDAO.createAuth(authData.authToken(),authData.username());
             authDAO.createAuth(authData1.authToken(),authData1.username());

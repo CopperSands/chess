@@ -26,16 +26,4 @@ public class ClearAppService {
         authDAO.clear();
         userDAO.clear();
     }
-// set the following to private after testing
-    public AuthDAO getAuthDAO() {
-        return authDAO;
-    }
-
-    public UserDAO getUserDAO() {
-        return userDAO;
-    }
-
-    public GameDAO getGameDAO() {
-        return gameDAO;
-    }
 }

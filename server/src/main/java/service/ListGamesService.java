@@ -14,7 +14,6 @@ public class ListGamesService {
     public ListGamesService(){
         authDAO = new LocalAuthDAO();
         gameDAO = new LocalGameDAO();
-
     }
     //for phase3
     public ListGamesService(AuthDAO authDAO,GameDAO gameDAO){
@@ -36,13 +35,5 @@ public class ListGamesService {
             throw new DataAccessException(e.getMessage());
         }
         return list;
-    }
-//change the following to private after testing
-    public AuthDAO getAuthDAO() {
-        return authDAO;
-    }
-
-    public GameDAO getGameDAO() {
-        return gameDAO;
     }
 }

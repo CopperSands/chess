@@ -22,9 +22,9 @@ public class RegisterServiceTests {
     @Test
     @DisplayName("valid registration 1 user")
     public void validRegistration() {
-        registerService = new RegisterService();
-        userDAO = registerService.getUserDAO();
-        authDAO = registerService.getAuthDAO();
+        userDAO = new LocalUserDAO();
+        authDAO = new LocalAuthDAO();
+        registerService = new RegisterService(userDAO,authDAO);
 
         try {
             AuthData token = registerService.register(user.username(), user.password(),user.email());

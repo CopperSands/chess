@@ -41,12 +41,4 @@ public class CreateGameService {
 
         return gameID;
     }
-//change the following to private after testing
-    public AuthDAO getAuthDAO() {
-        return authDAO;
-    }
-
-    public GameDAO getGameDAO() {
-        return gameDAO;
-    }
 }
