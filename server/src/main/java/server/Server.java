@@ -78,7 +78,7 @@ public class Server {
             else{
                 res.status(500);
             }
-            ErrorMessage message = new ErrorMessage(e.getMessage());
+            ErrorMessageRes message = new ErrorMessageRes(e.getMessage());
             return gson.toJson(message);
         }
     }
@@ -95,7 +95,7 @@ public class Server {
             }else{
                 res.status(500);
             }
-            ErrorMessage message = new ErrorMessage(e.getMessage());
+            ErrorMessageRes message = new ErrorMessageRes(e.getMessage());
             return gson.toJson(message);
         }
     }
@@ -112,7 +112,7 @@ public class Server {
             }else{
                 res.status(500);
             }
-            ErrorMessage message = new ErrorMessage(e.getMessage());
+            ErrorMessageRes message = new ErrorMessageRes(e.getMessage());
             return gson.toJson(message);
         }
     }
@@ -131,7 +131,7 @@ public class Server {
             }else {
                 res.status(500);
             }
-            ErrorMessage message = new ErrorMessage(e.getMessage());
+            ErrorMessageRes message = new ErrorMessageRes(e.getMessage());
             return gson.toJson(message);
         }
     }
@@ -139,11 +139,11 @@ public class Server {
     private Object createGameHandler(Request req, Response res){
         Gson gson = new Gson();
         String authToken = req.headers("authorization");
-        CreateGame gameReq = gson.fromJson(req.body(),CreateGame.class);
+        CreateGameReq gameReq = gson.fromJson(req.body(), CreateGameReq.class);
         AuthData authData = new AuthData(authToken,null);
         try{
             int gameID = createGameService.CreateGame(authData,gameReq.gameName());
-            GameID returnObj = new GameID(gameID);
+            CreateGameRes returnObj = new CreateGameRes(gameID);
             return gson.toJson(returnObj);
         }catch(DataAccessException e){
             if (e.getMessage() == "Error unauthorized"){
@@ -153,7 +153,7 @@ public class Server {
             }else{
                 res.status(500);
             }
-            ErrorMessage message = new ErrorMessage(e.getMessage());
+            ErrorMessageRes message = new ErrorMessageRes(e.getMessage());
             return gson.toJson(message);
         }
     }
@@ -175,7 +175,7 @@ public class Server {
             }else{
                 res.status(500);
             }
-            ErrorMessage message = new ErrorMessage(e.getMessage());
+            ErrorMessageRes message = new ErrorMessageRes(e.getMessage());
             return gson.toJson(message);
         }
     }
@@ -186,7 +186,7 @@ public class Server {
             return "";
         }catch (DataAccessException e){
             res.status(500);
-            ErrorMessage message = new ErrorMessage(e.getMessage());
+            ErrorMessageRes message = new ErrorMessageRes(e.getMessage());
             return new Gson().toJson(message);
         }
     }

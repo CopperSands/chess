@@ -18,25 +18,6 @@ public class RegisterServiceTests {
     private static UserData user1 = new UserData("user1","password", "other@mail.com");
     private static UserData user2 = new UserData("user2","password1", "jon@mail.com");
 
-//    @BeforeAll
-//    @DisplayName("setup")
-//    public static void createDAO(){
-//        userDAO = new LocalUserDAO();
-//        authDAO = new LocalAuthDAO();
-//
-//    }
-//
-//    @AfterAll
-//    @DisplayName("cleanup")
-//    public static void cleanUp(){
-//        try{
-//            userDAO.clear();
-//            authDAO.clear();
-//        }catch(Exception e){
-//            assertNull(e);
-//        }
-//    }
-
     @Test
     @DisplayName("valid registration 1 user")
     public void validRegistration() {
