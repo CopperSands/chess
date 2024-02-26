@@ -13,45 +13,30 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessPiece {
-
     private ChessGame.TeamColor teamColor;
     private PieceType type;
-
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         this.teamColor = pieceColor;
         this.type = type;
     }
-
     /**
      * The various different chess piece options
      */
-    public enum PieceType {
-        KING,
-        QUEEN,
-        BISHOP,
-        KNIGHT,
-        ROOK,
-        PAWN
-    }
-
+    public enum PieceType {KING, QUEEN, BISHOP, KNIGHT, ROOK, PAWN}
     /**
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor()
     {
         return teamColor;
-        //throw new RuntimeException("Not implemented");
     }
-
     /**
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType()
     {
         return type;
-        //throw new RuntimeException("Not implemented");
     }
-
     /**
      * Calculates all the positions a chess piece can move to
      * Does not take into account moves that are illegal due to leaving the king in
@@ -70,7 +55,6 @@ public class ChessPiece {
         }
         else if (type == PieceType.BISHOP){
         moves = bishopMoves(board,myPosition);
-
         }
         else if (type == PieceType.KNIGHT){
         moves = knightMoves(board,myPosition);
@@ -82,7 +66,6 @@ public class ChessPiece {
         moves = pawnMoves(board,myPosition);
         }
         return moves;
-        //throw new RuntimeException("Not implemented");
     }
 
     private Collection<ChessMove> rookMoves (ChessBoard board, ChessPosition startPosition){
@@ -96,40 +79,32 @@ public class ChessPiece {
         while(startRow + i < 9 && isMore){
             ChessPosition nextSpace = new ChessPosition(startRow + i, startCol);
             isMore = addMove(board,moves,startPosition,nextSpace);
-
             i++;
         }
-
         // bottom
         i = -1;
         isMore = true;
         while(startRow + i > 0 && isMore){
             ChessPosition nextSpace = new ChessPosition(startRow + i, startCol);
             isMore = addMove(board,moves,startPosition,nextSpace);
-
             i--;
         }
-
         // right
         int j = 1;
         isMore = true;
         while(startCol + j < 9 && isMore){
             ChessPosition nextSpace = new ChessPosition(startRow, startCol + j);
             isMore = addMove(board,moves,startPosition,nextSpace);
-
             j++;
         }
-
         // left
         j = -1;
         isMore = true;
         while(startCol + j > 0 && isMore){
             ChessPosition nextSpace = new ChessPosition(startRow, startCol + j);
             isMore = addMove(board,moves,startPosition,nextSpace);
-
             j--;
         }
-
         return moves;
     }
 
@@ -145,21 +120,17 @@ public class ChessPiece {
         while (startRow + i < 9 && startCol +j < 9 && isMore){
             ChessPosition nextSpace = new ChessPosition(startRow +i, startCol +j);
             isMore = addMove(board,moves,startPosition,nextSpace);
-
             i++;
             j++;
         }
-
         //top
         i = 1;
         isMore = true;
         while(startRow + i < 9 && isMore){
             ChessPosition nextSpace = new ChessPosition(startRow + i,startCol);
             isMore = addMove(board,moves,startPosition,nextSpace);
-
             i++;
         }
-
         //top left
         i = 1;
         j = -1;
@@ -167,21 +138,17 @@ public class ChessPiece {
         while(startRow + i < 9 && startCol + j > 0 && isMore){
             ChessPosition nextSpace = new ChessPosition(startRow + i,startCol + j);
             isMore = addMove(board,moves,startPosition,nextSpace);
-
             i++;
             j--;
         }
-
         //left
         j = -1;
         isMore = true;
         while(startCol + j > 0 && isMore ){
             ChessPosition nextSpace = new ChessPosition(startRow, startCol + j);
             isMore = addMove(board,moves,startPosition,nextSpace);
-
             j--;
         }
-
         //bottom left
         i = -1;
         j = -1;
@@ -189,21 +156,17 @@ public class ChessPiece {
         while(startRow + i > 0 && startCol + j > 0 && isMore){
             ChessPosition nextSpace = new ChessPosition(startRow + i, startCol +j);
             isMore = addMove(board,moves,startPosition,nextSpace);
-
             i--;
             j--;
         }
-
         // bottom
         i = -1;
         isMore = true;
         while (startRow + i > 0 && isMore){
             ChessPosition nextSpace = new ChessPosition(startRow + i, startCol);
             isMore = addMove(board,moves,startPosition,nextSpace);
-
             i--;
         }
-
         //bottom right
         i = -1;
         j = 1;
@@ -211,24 +174,19 @@ public class ChessPiece {
         while (startRow + i > 0 && startCol + j < 9 && isMore){
             ChessPosition nextSpace = new ChessPosition(startRow + i, startCol + j);
             isMore = addMove(board,moves,startPosition,nextSpace);
-
             i--;
             j++;
         }
-
         //right
         j = 1;
         isMore = true;
         while(startCol + j < 9 && isMore){
             ChessPosition nextSpace = new ChessPosition(startRow,startCol + j);
             isMore = addMove(board,moves,startPosition,nextSpace);
-
             j++;
         }
-
         return moves;
     }
-
     /**
      * Gets all pawn moves in and returns them in a HashSet
      * @param board
@@ -240,7 +198,6 @@ public class ChessPiece {
         Collection<ChessMove> moves = new HashSet<ChessMove>();
         int startRow = startPosition.getRow();
         int startCol = startPosition.getColumn();
-
         //write separate condition for white and black team
         if (teamColor == ChessGame.TeamColor.WHITE){
             //only a pawn is in the start has this move
@@ -263,9 +220,7 @@ public class ChessPiece {
                         }
                     }
                     else if ((board.getPiece(nextSpace) != null && ((startRow +1) == 8))){
-                        if (board.getPiece(nextSpace).getTeamColor() != ChessGame.TeamColor.WHITE){
-                            promotionMoves(moves,startPosition,nextSpace);
-                        }
+                        if (board.getPiece(nextSpace).getTeamColor() != ChessGame.TeamColor.WHITE){ promotionMoves(moves,startPosition,nextSpace);}
                     }
                 }
                 if (startCol +1 < 9){
@@ -278,9 +233,7 @@ public class ChessPiece {
                         }
                     }
                     else if ((board.getPiece(nextSpace) != null && ((startRow +1) == 8))){
-                        if (board.getPiece(nextSpace).getTeamColor() != ChessGame.TeamColor.WHITE){
-                            promotionMoves(moves,startPosition,nextSpace);
-                        }
+                        if (board.getPiece(nextSpace).getTeamColor() != ChessGame.TeamColor.WHITE){ promotionMoves(moves,startPosition,nextSpace);}
                     }
                 }
             }
@@ -290,12 +243,7 @@ public class ChessPiece {
                 ChessMove newMove = new ChessMove(startPosition,nextSpace,null);
                 moves.add(newMove);
             }
-            else if(board.getPiece(nextSpace) == null && (startRow +1 == 8)){
-                promotionMoves(moves,startPosition,nextSpace);
-            }
-
-
-
+            else if(board.getPiece(nextSpace) == null && (startRow +1 == 8)){ promotionMoves(moves,startPosition,nextSpace);}
         }
         else if (teamColor == ChessGame.TeamColor.BLACK){
             if (startRow == 7){
@@ -316,9 +264,7 @@ public class ChessPiece {
                             moves.add(newMove);
                         }
                     }
-                    else if (board.getPiece(nextSpace) != null && startRow -1 == 1){
-                        promotionMoves(moves,startPosition,nextSpace);
-                    }
+                    else if (board.getPiece(nextSpace) != null && startRow -1 == 1){ promotionMoves(moves,startPosition,nextSpace);}
                 }
                 if (startCol +1 < 9){
                     //bottom right
@@ -329,9 +275,7 @@ public class ChessPiece {
                             moves.add(newMove);
                         }
                     }
-                    else if (board.getPiece(nextSpace) != null && startRow -1 == 1){
-                        promotionMoves(moves,startPosition,nextSpace);
-                    }
+                    else if (board.getPiece(nextSpace) != null && startRow -1 == 1){ promotionMoves(moves,startPosition,nextSpace);}
                 }
                 //bottom
                 ChessPosition nextSpace = new ChessPosition(startRow -1, startCol);
@@ -339,15 +283,11 @@ public class ChessPiece {
                     ChessMove newSpace = new ChessMove(startPosition,nextSpace,null);
                     moves.add(newSpace);
                 }
-                else if (board.getPiece(nextSpace) == null && startRow -1 == 1){
-                    promotionMoves(moves,startPosition,nextSpace);
-                }
+                else if (board.getPiece(nextSpace) == null && startRow -1 == 1){ promotionMoves(moves,startPosition,nextSpace);}
             }
         }
-
         return moves;
     }
-
     /**
      * Used to get all promotion moves for a pawn
      * @param moves
@@ -400,7 +340,6 @@ public class ChessPiece {
             ChessPosition nextSpace = new ChessPosition(startRow -1, startCol +2);
             addMove(board,moves,startPosition,nextSpace);
         }
-
         return moves;
     }
 
@@ -414,19 +353,16 @@ public class ChessPiece {
             ChessPosition nextSpace = new ChessPosition(startRow +1, startCol +1);
             addMove(board,moves,startPosition,nextSpace);
         }
-
         // check top direct
         if((startRow + 1) < 9){
             ChessPosition nextSpace = new ChessPosition(startRow + 1, startCol);
             addMove(board,moves,startPosition,nextSpace);
         }
-
         //check top left
         if (((startRow + 1) < 9) && ((startCol - 1 ) > 0)){
             ChessPosition nextSpace = new ChessPosition(startRow + 1, startCol - 1);
             addMove(board,moves,startPosition,nextSpace);
         }
-
         // bottom left
         if (((startRow - 1) > 0) && ((startRow - 1) > 0)){
             ChessPosition nextSpace = new ChessPosition(startRow -1, startCol -1);
@@ -469,7 +405,6 @@ public class ChessPiece {
         while (((startRow + i) < 9) && ((startCol + i) < 9) && isMore){
             ChessPosition nextSpace = new ChessPosition(startRow + i, startCol + i);
             isMore = addMove(board,moves,startPosition,nextSpace);
-
             i++;
         }
 
@@ -481,7 +416,6 @@ public class ChessPiece {
             isMore = addMove(board,moves,startPosition,nextSpace);
             i--;
         }
-
         //check for top left
         i = 1;
         int j = -1;
@@ -489,11 +423,9 @@ public class ChessPiece {
         while (((startRow + i) < 9) && ((startCol + j) > 0) && isMore){
             ChessPosition nextSpace = new ChessPosition(startRow + i, startCol + j);
             isMore = addMove(board,moves,startPosition,nextSpace);
-
             i++;
             j--;
         }
-
         //check bottom right
         i = -1;
         j = 1;
@@ -501,15 +433,11 @@ public class ChessPiece {
         while (((startRow + i) > 0) && ((startCol + j) < 9) && isMore){
             ChessPosition nextSpace = new ChessPosition(startRow + i, startCol + j);
             isMore = addMove(board,moves,startPosition,nextSpace);
-
             i--;
             j++;
         }
-
-
         return moves;
     }
-
     /**
      * This method handles logic when moving chess pieces. Not for use with pawns
      * @param board
@@ -534,7 +462,6 @@ public class ChessPiece {
         }
         return isMore;
     }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -542,7 +469,6 @@ public class ChessPiece {
         ChessPiece that = (ChessPiece) o;
         return teamColor == that.teamColor && type == that.type;
     }
-
     @Override
     public int hashCode() {
         return Objects.hash(teamColor, type);

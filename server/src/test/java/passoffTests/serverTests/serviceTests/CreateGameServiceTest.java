@@ -27,8 +27,8 @@ public class CreateGameServiceTest {
         try{
             authDAO.createAuth(authData.authToken(),authData.username());
 
-            int game1ID = createGameService.CreateGame(authData,"game1");
-            int game2ID = createGameService.CreateGame(authData,"game2");
+            int game1ID = createGameService.createGame(authData,"game1");
+            int game2ID = createGameService.createGame(authData,"game2");
             //check for consistency
             GameData game1 = gameDAO.getGame(game1ID);
             GameData game2 = gameDAO.getGame(game2ID);
@@ -48,7 +48,7 @@ public class CreateGameServiceTest {
         createGameService = new CreateGameService();
 
         try{
-            createGameService.CreateGame(authData,"game1");
+            createGameService.createGame(authData,"game1");
         }catch(DataAccessException e){
             DataAccessException expected = new DataAccessException("Error unauthorized");
             assertEquals(expected.getClass(),e.getClass());

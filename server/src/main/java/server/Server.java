@@ -108,6 +108,7 @@ public class Server {
             return "";
         }catch (DataAccessException e){
             if (e.getMessage() == "Error unauthorized"){
+                //this is a bad logout
                 res.status(401);
             }else{
                 res.status(500);
@@ -142,7 +143,7 @@ public class Server {
         CreateGameReq gameReq = gson.fromJson(req.body(), CreateGameReq.class);
         AuthData authData = new AuthData(authToken,null);
         try{
-            int gameID = createGameService.CreateGame(authData,gameReq.gameName());
+            int gameID = createGameService.createGame(authData,gameReq.gameName());
             CreateGameRes returnObj = new CreateGameRes(gameID);
             return gson.toJson(returnObj);
         }catch(DataAccessException e){

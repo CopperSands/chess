@@ -22,10 +22,14 @@ public class RegisterServiceTests {
     @DisplayName("valid registration 1 user")
     public void validRegistration() {
         regService = new RegisterService();
-
+        userDAO = regService.getUserDAO();
+        authDAO = regService.getAuthDAO();
 
         try {
             regService.register(user.username(), user.password(),user.email());
+            UserData returnedUser = userDAO.getUser(user.username());
+            assertNotNull(returnedUser);
+            assertEquals(user.email(),returnedUser.email());
         }catch(DataAccessException e){
             assertNull(e);
         }

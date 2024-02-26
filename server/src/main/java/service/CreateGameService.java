@@ -20,7 +20,7 @@ public class CreateGameService {
         this.gameDAO = gameDAO;
     }
 
-    public int CreateGame(AuthData authToken, String gameName) throws  DataAccessException{
+    public int createGame(AuthData authToken, String gameName) throws  DataAccessException{
         int gameID;
         //check authToken
         try{
