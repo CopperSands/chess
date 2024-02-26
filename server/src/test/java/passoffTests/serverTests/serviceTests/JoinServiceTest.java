@@ -4,14 +4,13 @@ import chess.ChessGame;
 import dataAccess.AuthDAO;
 import dataAccess.DataAccessException;
 import dataAccess.GameDAO;
-import dataAccess.LocalAuthDAO;
 import model.AuthData;
 import model.GameData;
 import org.junit.jupiter.api.Test;
 import service.JoinGameService;
 
 import static org.junit.jupiter.api.Assertions.*;
-public class JoinReqServiceTest {
+public class JoinServiceTest {
 
     private JoinGameService joinGameService;
     private AuthDAO authDAO;

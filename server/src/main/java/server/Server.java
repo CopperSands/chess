@@ -168,7 +168,7 @@ public class Server {
         }catch (DataAccessException e){
             if (e.getMessage() == "Error unauthorized"){
                 res.status(401);
-            }else if(e.getMessage() == "Error game not found"){
+            }else if(e.getMessage() == "Error bad request"){
                 res.status(400);
             }else if(e.getMessage() == "Error already taken"){
                 res.status(403);

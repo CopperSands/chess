@@ -32,14 +32,15 @@ public class JoinGameService {
             }
             game = gameDAO.getGame(gameID);
             if (game == null){
-                throw new DataAccessException("Error game not found");
+                throw new DataAccessException("Error bad request");
             }
-            if (isTeamTaken(clientColor)){
-                throw new DataAccessException("Error already taken");
+            if (clientColor != null) {
+                if (isTeamTaken(clientColor)) {
+                    throw new DataAccessException("Error already taken");
+                }
+                updateGameData(foundToken.username(), clientColor);
+                gameDAO.updateGame(game.gameID(), game);
             }
-            updateGameData(foundToken.username(), clientColor);
-            gameDAO.updateGame(game.gameID(),game);
-
 
 
         }catch (DataAccessException e){
