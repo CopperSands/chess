@@ -22,13 +22,10 @@ public class JoinGameService {
         this.gameDAO = gameDAO;
     }
 
-    public void joinGame(AuthData authToken, String clientColor, int gameID)throws DataAccessException {
+    public void joinGame(String authToken, String clientColor, int gameID)throws DataAccessException {
         try{
-            AuthData returned = authDAO.getAuth(authToken.authToken());
-            if (returned == null){
-                throw new DataAccessException("Error unauthorized");
-            }
-            if (returned.username() != authToken.username()){
+            AuthData foundToken = authDAO.getAuth(authToken);
+            if (foundToken == null){
                 throw new DataAccessException("Error unauthorized");
             }
             game = gameDAO.getGame(gameID);
@@ -38,7 +35,7 @@ public class JoinGameService {
             if (isTeamTaken(clientColor)){
                 throw new DataAccessException("Error already taken");
             }
-            updateGameData(authToken.username(), clientColor);
+            updateGameData(foundToken.username(), clientColor);
             gameDAO.updateGame(game.gameID(),game);
 
 

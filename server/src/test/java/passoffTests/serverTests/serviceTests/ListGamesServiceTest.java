@@ -38,7 +38,7 @@ public class ListGamesServiceTest {
             gameDAO.createGame(game1.whiteUsername(),game1.blackUsername(),game1.gameName(),game1.game());
             gameDAO.createGame(game2.whiteUsername(),game2.blackUsername(),game2.gameName(),game2.game());
 
-            Collection<GameData> result = listGamesService.listGames(authData);
+            Collection<GameData> result = listGamesService.listGames(authData.authToken());
             assertNotNull(result);
             assertTrue(result.contains(game));
             assertTrue(result.contains(game1));
@@ -65,7 +65,7 @@ public class ListGamesServiceTest {
             gameDAO.createGame(game2.whiteUsername(), game2.blackUsername(),game2.gameName(),game2.game());
             AuthData badData = new AuthData("nope", "nope");
             try{
-                Collection<GameData> result = listGamesService.listGames(badData);
+                Collection<GameData> result = listGamesService.listGames(badData.authToken());
             }catch(DataAccessException e){
                 DataAccessException expected = new DataAccessException("Error unauthorized");
                 assertEquals(expected.getClass(),e.getClass());

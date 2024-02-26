@@ -158,7 +158,25 @@ public class Server {
     }
 
     private Object joinGameHandler(Request req, Response res){
-        return "hello";
+        Gson gson = new Gson();
+        String authToken = req.headers("authorization");
+        JoinReq joinReq = gson.fromJson(req.body(),JoinReq.class);
+        try{
+            joinGameService.joinGame(authToken,joinReq.playerColor(),joinReq.gameID());
+            return "";
+        }catch (DataAccessException e){
+            if (e.getMessage() == "Error unauthorized"){
+                res.status(401);
+            }else if(e.getMessage() == "Error game not found"){
+                res.status(400);
+            }else if(e.getMessage() == "Error already taken"){
+                res.status(403);
+            }else{
+                res.status(500);
+            }
+            ErrorMessage message = new ErrorMessage(e.getMessage());
+            return gson.toJson(message);
+        }
     }
 
     private Object clearHandler(Request req, Response res){
