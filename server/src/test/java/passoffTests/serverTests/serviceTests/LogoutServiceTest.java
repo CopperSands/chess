@@ -24,8 +24,7 @@ public class LogoutServiceTest {
             //populate authDAO
             String authToken = AuthString.createAuthToken();
             authDAO.createAuth(authToken,username);
-            AuthData authData = new AuthData(authToken,username);
-            logoutService.logout(authData);
+            logoutService.logout(authToken);
             //check that token was deleted
             AuthData result = authDAO.getAuth(authToken);
             assertNull(result);
@@ -43,8 +42,7 @@ public class LogoutServiceTest {
             //populate authDAO
             String authToken = AuthString.createAuthToken();
             authDAO.createAuth(authToken,username);
-            AuthData authData = new AuthData(authToken,username1);
-            logoutService.logout(authData);
+            logoutService.logout(authToken);
 
 
         }catch (DataAccessException e){

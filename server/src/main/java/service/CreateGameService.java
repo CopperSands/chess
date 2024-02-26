@@ -24,12 +24,12 @@ public class CreateGameService {
         int gameID;
         //check authToken
         try{
+            if (gameName == null){
+                throw new DataAccessException("Error bad request");
+            }
             AuthData returned = authDAO.getAuth(authToken.authToken());
 
             if(returned == null){
-                throw new DataAccessException("Error unauthorized");
-            }
-            if (returned.authToken() != authToken.authToken() || returned.username() != authToken.username()){
                 throw new DataAccessException("Error unauthorized");
             }
             ChessGame game = new ChessGame();

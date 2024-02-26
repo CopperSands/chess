@@ -1,8 +1,14 @@
 package server;
 
+import com.google.gson.Gson;
 import dataAccess.*;
+import model.AuthData;
+import model.GameData;
+import model.UserData;
 import service.*;
 import spark.*;
+
+import java.util.Collection;
 
 public class Server {
 
@@ -41,6 +47,10 @@ public class Server {
         // Register your endpoints and handle exceptions here.
         Spark.post("/user",this::registrationHandler);
         Spark.post("/session", this::loginHandler);
+        Spark.delete("/session", this::logoutHandler);
+        Spark.get("/game",this::listGamesHandler);
+        Spark.post("/game",this::createGameHandler);
+        Spark.put("/game",this::joinGameHandler);
         Spark.delete("/db",this::clearHandler);
 
 
@@ -54,23 +64,97 @@ public class Server {
     }
 
     private Object registrationHandler(Request req, Response res){
-        return "hello";
+        Gson gson = new Gson();
+        UserData user = gson.fromJson(req.body(),UserData.class);
+        try{
+            AuthData authToken = registerService.register(user.username(),user.password(),user.email());
+            return gson.toJson(authToken);
+        }catch(DataAccessException e){
+            if (e.getMessage() == "Error username is taken"){
+                res.status(403);
+            }else if (e.getMessage() == "Error bad request"){
+                res.status(400);
+            }
+            else{
+                res.status(500);
+            }
+            ErrorMessage message = new ErrorMessage(e.getMessage());
+            return gson.toJson(message);
+        }
     }
 
     private Object loginHandler(Request req, Response res){
-        return "hello";
+        Gson gson = new Gson();
+        UserData user = gson.fromJson(req.body(),UserData.class);
+        try{
+            AuthData authToken = loginService.login(user.username(),user.password());
+            return gson.toJson(authToken);
+        }catch (DataAccessException e){
+            if (e.getMessage() == "Error Incorrect password" || e.getMessage() == "Error user does not exit"){
+                res.status(401);
+            }else{
+                res.status(500);
+            }
+            ErrorMessage message = new ErrorMessage(e.getMessage());
+            return gson.toJson(message);
+        }
     }
 
     private Object logoutHandler(Request req, Response res){
-        return "hello";
+        Gson gson = new Gson();
+        String authToken = req.headers("authorization");
+        try{
+            logoutService.logout(authToken);
+            return "";
+        }catch (DataAccessException e){
+            if (e.getMessage() == "Error unauthorized"){
+                res.status(401);
+            }else{
+                res.status(500);
+            }
+            ErrorMessage message = new ErrorMessage(e.getMessage());
+            return gson.toJson(message);
+        }
     }
 
     private Object listGamesHandler(Request req, Response res){
-        return "hello";
+        Gson gson = new Gson();
+        String authToken = req.headers("authorization");
+        try{
+            Collection <GameData> games = listGamesService.listGames(authToken);
+            return gson.toJson(games);
+
+        }catch (DataAccessException e){
+            if (e.getMessage() == "Error unauthorized"){
+                res.status(401);
+            }else {
+                res.status(500);
+            }
+            ErrorMessage message = new ErrorMessage(e.getMessage());
+            return gson.toJson(message);
+        }
     }
 
     private Object createGameHandler(Request req, Response res){
-        return "hello";
+        Gson gson = new Gson();
+        String authToken = req.headers("authorization");
+        CreateGame gameReq = gson.fromJson(req.body(),CreateGame.class);
+        AuthData authData = new AuthData(authToken,null);
+        try{
+            int gameID = createGameService.CreateGame(authData,gameReq.gameName());
+            GameID returnObj = new GameID(gameID);
+            return gson.toJson(returnObj);
+        }catch(DataAccessException e){
+            if (e.getMessage() == "Error unauthorized"){
+                res.status(401);
+            }else if(e.getMessage() == "Error bad request"){
+                res.status(400);
+            }else{
+                res.status(500);
+            }
+            ErrorMessage message = new ErrorMessage(e.getMessage());
+            return gson.toJson(message);
+        }
     }
 
     private Object joinGameHandler(Request req, Response res){
@@ -80,9 +164,11 @@ public class Server {
     private Object clearHandler(Request req, Response res){
         try{
             clearAppService.clear();
+            return "";
         }catch (DataAccessException e){
             res.status(500);
+            ErrorMessage message = new ErrorMessage(e.getMessage());
+            return new Gson().toJson(message);
         }
-        return "";
     }
 }

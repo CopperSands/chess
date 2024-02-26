@@ -38,6 +38,9 @@ public class RegisterService {
     public AuthData register(String username, String password, String email) throws DataAccessException{
         //check if user exits
         try {
+            if (username == null || password == null || email == null){
+                throw new DataAccessException("Error bad request");
+            }
 
             if(isUsernameTaken(username)){
                 throw new DataAccessException("Error username is taken");

@@ -18,14 +18,14 @@ public class LogoutService {
         this.authDAO = authDAO;
     }
 
-    public void logout(AuthData authToken) throws DataAccessException{
+    public void logout(String authToken) throws DataAccessException{
         try{
-            AuthData result = authDAO.getAuth(authToken.authToken());
+            AuthData foundToken = authDAO.getAuth(authToken);
             //check if authToken is valid
-            if (result == null){
+            if (foundToken == null){
                 throw new DataAccessException("Error unauthorized");
             }
-            authDAO.deleteAuth(authToken);
+            authDAO.deleteAuth(foundToken);
 
         }catch (DataAccessException e){
             throw new DataAccessException(e.getMessage());

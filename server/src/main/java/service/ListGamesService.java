@@ -22,15 +22,12 @@ public class ListGamesService {
         this.gameDAO = gameDAO;
     }
 
-    public Collection<GameData> listGames(AuthData authToken) throws DataAccessException {
+    public Collection<GameData> listGames(String authToken) throws DataAccessException {
         //check authentication
         Collection<GameData> list;
         try{
-            AuthData foundToken = authDAO.getAuth(authToken.authToken());
+            AuthData foundToken = authDAO.getAuth(authToken);
             if (foundToken == null){
-                throw new DataAccessException("Error unauthorized");
-            }
-            if(foundToken.authToken() != authToken.authToken() || foundToken.username() != authToken.username()){
                 throw new DataAccessException("Error unauthorized");
             }
             list = gameDAO.listGames();
