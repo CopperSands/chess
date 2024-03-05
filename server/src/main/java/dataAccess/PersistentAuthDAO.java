@@ -11,7 +11,7 @@ public class PersistentAuthDAO implements AuthDAO{
 
     private final String createTableSql = "CREATE TABLE IF NOT EXISTS auth(" +
             "authToken CHAR(60) NOT NULL, " +
-            "username VARCHAR NOT NULL," +
+            "username VARCHAR(100) NOT NULL," +
             "PRIMARY KEY (authToken)" +
             ")";
     //check connection to database and creates new database if needed
@@ -79,6 +79,15 @@ public class PersistentAuthDAO implements AuthDAO{
 
     @Override
     public void clear() throws DataAccessException {
+        try(Connection conn = DatabaseManager.getConnection()){
+            String sql = "DELETE FROM auth";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.executeUpdate();
+
+
+        }catch (SQLException e){
+            throw new DataAccessException("Error clearing database");
+        }
 
     }
 
