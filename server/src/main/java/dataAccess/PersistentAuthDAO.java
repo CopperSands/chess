@@ -11,7 +11,7 @@ public class PersistentAuthDAO implements AuthDAO{
 
     private final String createTableSql = "CREATE TABLE IF NOT EXISTS auth(" +
             "authToken CHAR(60) NOT NULL, " +
-            "userName VARCHAR NOT NULL," +
+            "username VARCHAR NOT NULL," +
             "PRIMARY KEY (authToken)" +
             ")";
     //check connection to database and creates new database if needed
@@ -40,6 +40,19 @@ public class PersistentAuthDAO implements AuthDAO{
     @Override
     public void createAuth(String authToken, String username) throws DataAccessException {
         //check if token exits
+        AuthData found = getAuth(authToken);
+        if (found != null){
+            throw new DataAccessException("Error failed to create authToken");
+        }
+        try(Connection conn = DatabaseManager.getConnection()){
+            String sql = "INSERT INTO auth (authToken, username) VALUES (?,?)";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1,authToken);
+            stmt.setString(2,username);
+            stmt.executeUpdate();
+        }catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
     }
 
     @Override
@@ -51,7 +64,7 @@ public class PersistentAuthDAO implements AuthDAO{
             stmt.setString(1, authToken);
             ResultSet result = stmt.executeQuery();
             if (result.next()){
-                token = new AuthData(result.getString("authToken"), result.getString("userName"));
+                token = new AuthData(result.getString("authToken"), result.getString("username"));
             }
             return token;
         } catch (SQLException e) {
