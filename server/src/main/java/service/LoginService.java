@@ -3,6 +3,7 @@ package service;
 import dataAccess.*;
 import model.AuthData;
 import model.UserData;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import service.helper.AuthString;
 import service.helper.HashPassword;
 
@@ -40,9 +41,9 @@ public class LoginService {
             }
 
             //check passwordHash
-            String passwordHash = HashPassword.hashPassword(password);
-            String userPass = user.password();
-            if (Arrays.equals(userPass.getBytes(StandardCharsets.UTF_8), passwordHash.getBytes(StandardCharsets.UTF_8))){
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            boolean isEqual = encoder.matches(password,user.password());
+            if (isEqual){
                 String authToken = AuthString.createAuthToken();
                  token = new AuthData(authToken, username);
                 authDAO.createAuth(token.authToken(),token.username());

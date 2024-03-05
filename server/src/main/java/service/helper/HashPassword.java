@@ -1,6 +1,7 @@
 package service.helper;
 
 import dataAccess.DataAccessException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -22,9 +23,8 @@ public class HashPassword {
         //in future add salt
         String passwordHash = null;
         try{
-            MessageDigest md = MessageDigest.getInstance("SHA-512");
-            byte[] hashBytes = md.digest(password.getBytes(StandardCharsets.UTF_8));
-            passwordHash = new String(hashBytes);
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            passwordHash = encoder.encode(password);
         }catch (Exception e){
             throw new DataAccessException(e.getMessage());
         }
