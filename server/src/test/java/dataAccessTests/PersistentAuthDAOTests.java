@@ -33,6 +33,18 @@ public class PersistentAuthDAOTests {
             assertNull(e);
         }
     }
+
+    @Test
+    public void failCreateNewToken(){
+        try{
+            authDAO.createAuth(token.authToken(), token.username());
+            authDAO.createAuth(token.authToken(), token.username());
+        }catch(DataAccessException e){
+            DataAccessException expected = new DataAccessException("Error failed to create authToken");
+            assertEquals(expected.getMessage(),e.getMessage());
+        }
+    }
+
     @Test
     public void getAuthToken(){
         try{
@@ -46,6 +58,16 @@ public class PersistentAuthDAOTests {
     }
 
     @Test
+    public void failGetAuthToken(){
+        try{
+            AuthData found = authDAO.getAuth(token.authToken());
+            assertNull(found);
+        }catch(DataAccessException e){
+            assertNull(e);
+        }
+    }
+
+    @Test
     public void deleteAuthToken(){
         try{
             authDAO.createAuth(token.authToken(), token1.username());
@@ -53,6 +75,15 @@ public class PersistentAuthDAOTests {
             AuthData found = authDAO.getAuth(token.authToken());
             assertNull(found);
         } catch(DataAccessException e){
+            assertNull(e);
+        }
+    }
+
+    @Test
+    public void failDeleteAuthToken(){
+        try{
+            authDAO.deleteAuth(token);
+        }catch(DataAccessException e){
             assertNull(e);
         }
     }
