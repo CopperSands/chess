@@ -46,6 +46,18 @@ public class PersistentAuthDAOTests {
     }
 
     @Test
+    public void deleteAuthToken(){
+        try{
+            authDAO.createAuth(token.authToken(), token1.username());
+            authDAO.deleteAuth(token);
+            AuthData found = authDAO.getAuth(token.authToken());
+            assertNull(found);
+        } catch(DataAccessException e){
+            assertNull(e);
+        }
+    }
+
+    @Test
     public void clearTest(){
         try{
             authDAO.createAuth(token.authToken(),token.username());

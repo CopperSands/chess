@@ -74,6 +74,14 @@ public class PersistentAuthDAO implements AuthDAO{
 
     @Override
     public void deleteAuth(AuthData authToken) throws DataAccessException {
+        try(Connection conn = DatabaseManager.getConnection()){
+            String sql = "DELETE FROM auth where authToken = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1,authToken.authToken());
+            stmt.executeUpdate();
+        }catch(SQLException e){
+            throw new DataAccessException("Error deleting authToken");
+        }
 
     }
 
