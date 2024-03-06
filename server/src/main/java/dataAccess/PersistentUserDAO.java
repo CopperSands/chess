@@ -5,6 +5,7 @@ import service.helper.TableCreation;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class PersistentUserDAO implements UserDAO{
@@ -36,11 +37,30 @@ public class PersistentUserDAO implements UserDAO{
 
     @Override
     public UserData getUser(String username) throws DataAccessException {
-        return null;
+        UserData userData = null;
+        try(Connection conn = DatabaseManager.getConnection()){
+            String sql = "SELECT * FROM user where username = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1,username);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                userData = new UserData(username,rs.getString("password"),rs.getString("email"));
+            }
+            return userData;
+        }catch (SQLException e){
+            throw new DataAccessException("Error getting user");
+        }
     }
 
     @Override
     public void clear() throws DataAccessException {
+        try(Connection conn = DatabaseManager.getConnection()){
+            String sql = "DELETE FROM user";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.executeUpdate();
+        }catch(SQLException e){
+            throw new DataAccessException("Error clearing users");
+        }
 
     }
 }
