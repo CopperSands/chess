@@ -4,6 +4,7 @@ import dataAccess.AuthDAO;
 import dataAccess.DataAccessException;
 import dataAccess.PersistentAuthDAO;
 import model.AuthData;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,15 @@ public class PersistentAuthDAOTests {
             authDAO = new PersistentAuthDAO();
             authDAO.clear();
         }catch(DataAccessException e){
+            assertNull(e);
+        }
+    }
+
+    @AfterEach
+    public void cleanup(){
+        try{
+            authDAO.clear();
+        }catch (DataAccessException e){
             assertNull(e);
         }
     }

@@ -16,7 +16,7 @@ public class PersistentAuthDAO implements AuthDAO{
             "PRIMARY KEY (authToken)" +
             ")";
     //check connection to database and creates new database if needed
-    public PersistentAuthDAO() throws DataAccessException{
+    public PersistentAuthDAO(){
         try(Connection conn = DatabaseManager.getConnection()){
             if(!isAuthTable(conn)){
                 TableCreation.createTable(conn,createTableSql);
@@ -32,10 +32,10 @@ public class PersistentAuthDAO implements AuthDAO{
                     throw new DataAccessException("Error internal server error");
                 }
             } catch(DataAccessException ex){
-                throw ex;
+                ex.printStackTrace();
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Error internal server error");
+            e.printStackTrace();
         }
     }
     @Override
