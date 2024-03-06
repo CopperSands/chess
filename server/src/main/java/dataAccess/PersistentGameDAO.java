@@ -103,7 +103,20 @@ public class PersistentGameDAO implements GameDAO{
 
     @Override
     public void updateGame(int gameID, GameData updatedGame) throws DataAccessException {
+        Gson gson = new Gson();
+        String json = gson.toJson(updatedGame.game());
+        try(Connection conn = DatabaseManager.getConnection()){
+            String sql = "UPDATE game SET whiteUsername = ?, blackUsername = ?, game = ? WHERE gameID = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, updatedGame.whiteUsername());
+            stmt.setString(2,updatedGame.blackUsername());
+            stmt.setString(3,json);
+            stmt.setInt(4,gameID);
+            stmt.executeUpdate();
 
+        } catch (SQLException e) {
+            throw new DataAccessException("Error updating game");
+        }
     }
 
     @Override
