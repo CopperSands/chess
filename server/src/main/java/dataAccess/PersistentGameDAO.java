@@ -6,6 +6,7 @@ import model.GameData;
 import service.helper.TableCreation;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class PersistentGameDAO implements GameDAO{
@@ -17,7 +18,7 @@ public class PersistentGameDAO implements GameDAO{
             "gameName VARCHAR(150)," +
             "game VARCHAR(1900) NOT NULL," +
             "PRIMARY KEY (gameID)" +
-            "Unique )";
+            ")";
 
     public PersistentGameDAO(){
         try(Connection conn = DatabaseManager.getConnection()){
@@ -46,7 +47,7 @@ public class PersistentGameDAO implements GameDAO{
             stmt.executeUpdate();
             ResultSet rs = stmt.getGeneratedKeys();
             if(rs.next()){
-                gameID = rs.getInt("gameID");
+                gameID = rs.getInt(1);
             }
             if (gameID == 0){
                 throw new DataAccessException("Error creating new game");
@@ -65,12 +66,9 @@ public class PersistentGameDAO implements GameDAO{
             String sql = "SELECT * FROM game where gameID = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1,gameID);
-            ResultSet result = stmt.executeQuery();
-            if(result.next()){
-                String json = result.getString("game");
-                ChessGame returnedGame = gson.fromJson(json, ChessGame.class);
-                game = new GameData(result.getInt("gameID"), result.getString("whiteUsername"),
-                        result.getString("blackUsername"),result.getString("gameName"), returnedGame);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                game = getServerGame(rs);
             }
             return game;
         }catch(SQLException e){
@@ -80,7 +78,27 @@ public class PersistentGameDAO implements GameDAO{
 
     @Override
     public Collection<GameData> listGames() throws DataAccessException {
-        return null;
+        ArrayList<GameData> list = new ArrayList<GameData>();
+        try(Connection conn = DatabaseManager.getConnection()){
+            String sql = "SELECT * FROM game";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()){
+                list.add(getServerGame(rs));
+            }
+            return list;
+        }catch(SQLException e){
+            throw new DataAccessException("Error getting games");
+        }
+    }
+
+    private GameData getServerGame(ResultSet rs) throws SQLException {
+        Gson gson = new Gson();
+        String json = rs.getString("game");
+        ChessGame returnedGame = gson.fromJson(json, ChessGame.class);
+        GameData game = new GameData(rs.getInt("gameID"), rs.getString("whiteUsername"),
+                rs.getString("blackUsername"),rs.getString("gameName"), returnedGame);
+        return game;
     }
 
     @Override
@@ -90,6 +108,13 @@ public class PersistentGameDAO implements GameDAO{
 
     @Override
     public void clear() throws DataAccessException {
+        try(Connection conn = DatabaseManager.getConnection()){
+            String sql = "DELETE FROM game";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.executeUpdate();
+        }catch (SQLException e){
+            throw new DataAccessException("error deleting games");
+        }
 
     }
 
