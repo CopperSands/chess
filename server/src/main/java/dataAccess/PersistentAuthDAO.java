@@ -10,16 +10,11 @@ import java.sql.SQLException;
 
 public class PersistentAuthDAO implements AuthDAO{
 
-    private final String createTableSql = "CREATE TABLE IF NOT EXISTS auth(" +
-            "authToken CHAR(60) NOT NULL, " +
-            "username VARCHAR(100) NOT NULL," +
-            "PRIMARY KEY (authToken)" +
-            ")";
     //check connection to database and creates new database if needed
     public PersistentAuthDAO(){
         try(Connection conn = DatabaseManager.getConnection()){
-            if(!isAuthTable(conn)){
-                TableCreation.createTable(conn,createTableSql);
+            if(!TableCreation.isUserTable(conn,"auth")){
+                TableCreation.createTable(conn, TableCreation.Tables.auth);
             }
 
         }catch(DataAccessException e){
@@ -27,7 +22,7 @@ public class PersistentAuthDAO implements AuthDAO{
                 //if the database doesn't exit
                 DatabaseManager.createDatabase();
                 try(Connection conn = DatabaseManager.getConnection()){
-                    TableCreation.createTable(conn,createTableSql);
+                    TableCreation.createTable(conn, TableCreation.Tables.auth);
                 } catch (SQLException ex) {
                     throw new DataAccessException("Error internal server error");
                 }
@@ -99,16 +94,4 @@ public class PersistentAuthDAO implements AuthDAO{
         }
 
     }
-
-    private boolean isAuthTable(Connection conn) {
-        boolean isTable = true;
-        try {
-            PreparedStatement stmt = conn.prepareStatement("select count(*) from auth");
-            stmt.execute();
-            return isTable;
-        } catch (SQLException e) {
-            return false;
-        }
-    };
-
 }

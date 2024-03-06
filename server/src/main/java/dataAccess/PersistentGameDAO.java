@@ -11,19 +11,10 @@ import java.util.Collection;
 
 public class PersistentGameDAO implements GameDAO{
 
-    private final String createUserTable = "CREATE TABLE IF NOT EXISTS game(" +
-            "gameID INT NOT NULL AUTO_INCREMENT," +
-            "whiteUsername VARCHAR(100)," +
-            "blackUsername VARCHAR(100)," +
-            "gameName VARCHAR(150)," +
-            "game VARCHAR(1900) NOT NULL," +
-            "PRIMARY KEY (gameID)" +
-            ")";
-
     public PersistentGameDAO(){
         try(Connection conn = DatabaseManager.getConnection()){
-            if(!isUserTable(conn)){
-                TableCreation.createTable(conn,createUserTable);
+            if(!TableCreation.isUserTable(conn,"game")){
+                TableCreation.createTable(conn, TableCreation.Tables.game);
             }
         }catch (SQLException e) {
             e.printStackTrace();
@@ -129,16 +120,5 @@ public class PersistentGameDAO implements GameDAO{
             throw new DataAccessException("error deleting games");
         }
 
-    }
-
-    private boolean isUserTable(Connection conn) {
-        boolean isTable = true;
-        try {
-            PreparedStatement stmt = conn.prepareStatement("select count(*) from user");
-            stmt.execute();
-            return isTable;
-        } catch (SQLException e) {
-            return false;
-        }
     }
 }
