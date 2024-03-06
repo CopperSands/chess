@@ -1,6 +1,7 @@
 package dataAccess;
 
 import model.AuthData;
+import service.helper.TableCreation;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,7 +19,7 @@ public class PersistentAuthDAO implements AuthDAO{
     public PersistentAuthDAO() throws DataAccessException{
         try(Connection conn = DatabaseManager.getConnection()){
             if(!isAuthTable(conn)){
-                createTable(conn);
+                TableCreation.createTable(conn,createTableSql);
             }
 
         }catch(DataAccessException e){
@@ -26,7 +27,7 @@ public class PersistentAuthDAO implements AuthDAO{
                 //if the database doesn't exit
                 DatabaseManager.createDatabase();
                 try(Connection conn = DatabaseManager.getConnection()){
-                    createTable(conn);
+                    TableCreation.createTable(conn,createTableSql);
                 } catch (SQLException ex) {
                     throw new DataAccessException("Error internal server error");
                 }
@@ -110,13 +111,4 @@ public class PersistentAuthDAO implements AuthDAO{
         }
     };
 
-
-    private void createTable(Connection conn) throws SQLException {
-        try{
-            PreparedStatement stmt = conn.prepareStatement(createTableSql);
-            stmt.executeUpdate();
-        }catch (SQLException e) {
-            throw e;
-        }
-    }
 }
