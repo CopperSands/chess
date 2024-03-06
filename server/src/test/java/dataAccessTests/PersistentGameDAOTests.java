@@ -5,6 +5,8 @@ import dataAccess.DataAccessException;
 import dataAccess.GameDAO;
 import dataAccess.PersistentGameDAO;
 import model.GameData;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -23,6 +25,15 @@ public class PersistentGameDAOTests {
     @BeforeEach
     public void setup(){
         gameDAO = new PersistentGameDAO();
+        try{
+            gameDAO.clear();
+        }catch (DataAccessException e){
+            assertNull(e);
+        }
+    }
+
+    @AfterEach
+    public void cleanup(){
         try{
             gameDAO.clear();
         }catch (DataAccessException e){
