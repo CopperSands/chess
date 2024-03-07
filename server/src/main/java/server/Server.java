@@ -25,9 +25,9 @@ public class Server {
 
     //edit constructor after database up
     public Server(){
-        authDAO = new LocalAuthDAO();
-        userDAO = new LocalUserDAO();
-        gameDAO = new LocalGameDAO();
+        authDAO = new PersistentAuthDAO();
+        userDAO = new PersistentUserDAO();
+        gameDAO = new PersistentGameDAO();
         registerService = new RegisterService(userDAO,authDAO);
         logoutService = new LogoutService(authDAO);
         loginService = new LoginService(userDAO,authDAO);
