@@ -26,7 +26,7 @@ public class TableCreation {
             "PRIMARY KEY (authToken)" +
             ")";
 
-    private static final String createUserTable = "CREATE TABLE user(" +
+    private static final String createUserTable = "CREATE TABLE IF NOT EXISTS user(" +
             "username VARCHAR(150) NOT NULL," +
             "password CHAR(60) NOT NULL," +
             "email VARCHAR(100) NOT NULL, " +
