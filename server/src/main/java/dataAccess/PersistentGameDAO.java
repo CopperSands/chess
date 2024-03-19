@@ -15,7 +15,6 @@ public class PersistentGameDAO implements GameDAO{
         try(Connection conn = DatabaseManager.getConnection()){
             if(!TableCreation.isUserTable(conn,"game")){
                 TableCreation.createTable(conn, TableCreation.Tables.game);
-                conn.commit();
             }
         }catch (SQLException e) {
             e.printStackTrace();
@@ -40,7 +39,6 @@ public class PersistentGameDAO implements GameDAO{
             ResultSet rs = stmt.getGeneratedKeys();
             if(rs.next()){
                 gameID = rs.getInt(1);
-                conn.commit();
             }
             if (gameID == 0){
                 throw new DataAccessException("Error creating new game");
@@ -106,7 +104,6 @@ public class PersistentGameDAO implements GameDAO{
             stmt.setString(3,json);
             stmt.setInt(4,gameID);
             stmt.executeUpdate();
-            conn.commit();
 
         } catch (SQLException e) {
             throw new DataAccessException("Error updating game");
@@ -119,7 +116,6 @@ public class PersistentGameDAO implements GameDAO{
             String sql = "DELETE FROM game";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.executeUpdate();
-            conn.commit();
         }catch (SQLException e){
             throw new DataAccessException("error deleting games");
         }

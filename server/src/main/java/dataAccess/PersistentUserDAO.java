@@ -14,7 +14,6 @@ public class PersistentUserDAO implements UserDAO{
         try(Connection conn = DatabaseManager.getConnection()){
             if(!TableCreation.isUserTable(conn,"user")){
                 TableCreation.createTable(conn, TableCreation.Tables.user);
-                conn.commit();
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -31,7 +30,6 @@ public class PersistentUserDAO implements UserDAO{
             stmt.setString(2,password);
             stmt.setString(3,email);
             stmt.executeUpdate();
-            conn.commit();
         }catch (SQLException e){
             throw new DataAccessException("Error creating user");
         }
@@ -60,7 +58,6 @@ public class PersistentUserDAO implements UserDAO{
             String sql = "DELETE FROM user";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.executeUpdate();
-            conn.commit();
         }catch(SQLException e){
             throw new DataAccessException("Error clearing users");
         }

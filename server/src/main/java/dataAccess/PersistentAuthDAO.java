@@ -15,7 +15,6 @@ public class PersistentAuthDAO implements AuthDAO{
         try(Connection conn = DatabaseManager.getConnection()){
             if(!TableCreation.isUserTable(conn,"auth")){
                 TableCreation.createTable(conn, TableCreation.Tables.auth);
-                conn.commit();
             }
 
         }catch(DataAccessException e){
@@ -24,7 +23,6 @@ public class PersistentAuthDAO implements AuthDAO{
                 DatabaseManager.createDatabase();
                 try(Connection conn = DatabaseManager.getConnection()){
                     TableCreation.createTable(conn, TableCreation.Tables.auth);
-                    conn.commit();
                 } catch (SQLException ex) {
                     throw new DataAccessException("Error internal server error");
                 }
@@ -48,7 +46,6 @@ public class PersistentAuthDAO implements AuthDAO{
             stmt.setString(1,authToken);
             stmt.setString(2,username);
             stmt.executeUpdate();
-            conn.commit();
         }catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
@@ -78,7 +75,6 @@ public class PersistentAuthDAO implements AuthDAO{
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1,authToken.authToken());
             stmt.executeUpdate();
-            conn.commit();
         }catch(SQLException e){
             throw new DataAccessException("Error deleting authToken");
         }
@@ -91,7 +87,6 @@ public class PersistentAuthDAO implements AuthDAO{
             String sql = "DELETE FROM auth";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.executeUpdate();
-            conn.commit();
 
         }catch (SQLException e){
             throw new DataAccessException("Error clearing database");
