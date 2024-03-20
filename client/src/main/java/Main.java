@@ -5,6 +5,11 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
+        if (args.length != 1){
+            System.out.println("Please enter the server port number as the first argument");
+            return;
+        }
+        ServerFacade serverFacade = new ServerFacade(Integer.getInteger(args[0]));
         Scanner scanner = new Scanner(System.in);
         System.out.println("Welcome to Chess. Type help to see options.");
         boolean isLive = true;
