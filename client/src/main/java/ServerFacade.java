@@ -46,18 +46,19 @@ public class ServerFacade {
         }
         //get response
         int resCode = httpConn.getResponseCode();
+        if (resCode == 403){
+            throw new Exception("Error username is taken");
+        }
+        else if(resCode == 400){
+            throw new Exception("Error bad request");
+        }
+        else if (resCode == 500){
+            throw new Exception("Internal Server Error");
+        }
         try(InputStream resBody = httpConn.getInputStream()){
             InputStreamReader inputStreamReader = new InputStreamReader(resBody);
-            if(resCode == 200){
-                authData = gson.fromJson(inputStreamReader,AuthData.class);
-            }
-            else{
-                ErrorRes error = gson.fromJson(inputStreamReader,ErrorRes.class);
-                throw new Exception(error.message());
-            }
+            authData = gson.fromJson(inputStreamReader,AuthData.class);
         }
-
-
     }
 
 

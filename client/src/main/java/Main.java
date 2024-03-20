@@ -9,7 +9,8 @@ public class Main {
             System.out.println("Please enter the server port number as the first argument");
             return;
         }
-        ServerFacade serverFacade = new ServerFacade(Integer.getInteger(args[0]));
+        System.out.println(args[0]);
+        ServerFacade serverFacade = new ServerFacade(Integer.parseInt(args[0]));
         Scanner scanner = new Scanner(System.in);
         System.out.println("Welcome to Chess. Type help to see options.");
         boolean isLive = true;
@@ -57,39 +58,14 @@ public class Main {
                     //call logout request
                     isLoggedIn = false;
                 }
-            }
-            else{
-                //these are the valid options for logged-out user
-                if(option.equals("help") || option.equals("Help")){
-                    loggedOutHelp();
-                }
-                else if(option.contains("register")){
-                    String [] registration = option.split(" +");
-                    if (registration.length == 4 && registration[0].equals("register")){
-                        //call register request
-                    }
-                    else{
-                        System.out.println("Invalid format");
-                    }
-                }
-                else if(option.contains("login") || option.contains("Login")){
-                    String [] login = option.split(" +");
-                    if (login.length == 3 && login[0].equals("login")){
-                        //call login request
-                        isLoggedIn = true;
-                    }
-                    else{
-                        System.out.println("Invalid login format");
-                    }
-                    System.out.println("login");
-                }
-                else if (option.equals("quit") || option.equals("Quit")){
-                    System.out.println("quit");
-                    isLive = false;
-                }
                 else{
                     System.out.println("Invalid command");
                 }
+            }
+            else{
+                GameLoop results = loggedOutOptions(option,serverFacade);
+                isLive = results.isLive();
+                isLoggedIn = results.isLoggedIn();
             }
         }
 
@@ -108,6 +84,55 @@ public class Main {
             status = "[LOGGED_OUT] >>> ";
         }
         return status;
+    }
+
+    private static GameLoop loggedOutOptions(String option, ServerFacade serverFacade){
+        boolean isLive = true;
+        boolean isLoggedIn = false;
+        if(option.equals("help") || option.equals("Help")){
+            loggedOutHelp();
+        }
+        else if(option.contains("register")){
+            String [] registration = option.split(" +");
+            if (registration.length == 4 && registration[0].equals("register")){
+                //call register request
+                try{
+                    serverFacade.registerRequest(registration[1],registration[2],registration[3]);
+                    isLoggedIn = true;
+                }catch (Exception e){
+                    if (e.getMessage().equals("Internal Server Error") ||
+                            e.getMessage().equals("Error username is taken") ||
+                            e.getMessage().equals("Error bad request")){
+                        System.out.println(e.getMessage());
+                    }
+                    else{
+                        System.out.println("Application Error");
+                    }
+                }
+            }
+            else{
+                System.out.println("Invalid format");
+            }
+        }
+        else if(option.contains("login") || option.contains("Login")){
+            String [] login = option.split(" +");
+            if (login.length == 3 && login[0].equals("login")){
+                //call login request
+                isLoggedIn = true;
+            }
+            else{
+                System.out.println("Invalid login format");
+            }
+            System.out.println("login");
+        }
+        else if (option.equals("quit") || option.equals("Quit")){
+            System.out.println("quit");
+            isLive = false;
+        }
+        else{
+            System.out.println("Invalid command");
+        }
+        return new GameLoop(isLive,isLoggedIn);
     }
 
     private static void loggedOutHelp(){
