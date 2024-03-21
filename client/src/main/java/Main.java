@@ -1,4 +1,3 @@
-import chess.*;
 import clientRecords.GameLoop;
 import model.GameData;
 

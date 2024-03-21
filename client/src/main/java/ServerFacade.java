@@ -4,13 +4,11 @@ import model.AuthData;
 import model.GameData;
 import model.UserData;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -26,25 +24,12 @@ public class ServerFacade {
         gameList = null;
     }
 
-    /**
-     * Sends a registration request to the server
-     * @param username
-     * @param password
-     * @param email
-     * @throws Exception
-     */
     public void registerRequest(String username, String password, String email) throws Exception {
         UserData userData = new UserData(username, password, email);
         URI uri = new URI(urlBase + "/user");
         postRegLogin(uri,userData);
     }
 
-    /**
-     * Sends a login request to the server
-     * @param username
-     * @param password
-     * @throws Exception
-     */
     public void login(String username, String password) throws Exception{
         UserData userData = new UserData(username, password, null);
         URI uri = new URI(urlBase + "/session");
@@ -53,14 +38,11 @@ public class ServerFacade {
 
     public void logout() throws Exception{
         URI uri = new URI(urlBase +"/session");
-        HttpURLConnection httpConn = (HttpURLConnection) uri.toURL().openConnection();
-        httpConn.setRequestMethod("DELETE");
-        //set authToken
-        httpConn.addRequestProperty("authorization",authData.authToken());
+        HttpURLConnection httpConn = ServerFacadeHelpers.getConnAndAuth(uri,"DELETE",authData.authToken());
         //get response
         int resCode = httpConn.getResponseCode();
         if (resCode != HttpURLConnection.HTTP_OK){
-            getErrorMessage(httpConn);
+            ServerFacadeHelpers.getErrorMessage(httpConn);
         }
     }
 
@@ -69,16 +51,10 @@ public class ServerFacade {
         Gson gson = new Gson();
         CreateGameJson createGame = new CreateGameJson(gameName);
         URI uri = new URI(urlBase +"/game");
-        HttpURLConnection httpConn = (HttpURLConnection) uri.toURL().openConnection();
-        httpConn.setRequestMethod("POST");
-        httpConn.addRequestProperty("authorization",authData.authToken());
+        HttpURLConnection httpConn = ServerFacadeHelpers.getConnAndAuth(uri,"POST",authData.authToken());
         httpConn.setDoOutput(true);
-        try (OutputStream outputStream = httpConn.getOutputStream()) {
-            String json = gson.toJson(createGame);
-            outputStream.write(json.getBytes(StandardCharsets.UTF_8));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        String json = gson.toJson(createGame);
+        ServerFacadeHelpers.writeBody(httpConn,json);
         //get response
         int resCode = httpConn.getResponseCode();
         if(resCode == HttpURLConnection.HTTP_OK){
@@ -88,9 +64,7 @@ public class ServerFacade {
                 gameID = res.gameID();
             }
         }
-        else{
-            getErrorMessage(httpConn);
-        }
+        else{ServerFacadeHelpers.getErrorMessage(httpConn);}
         return gameID;
     }
 
@@ -115,18 +89,14 @@ public class ServerFacade {
                 }
             }
         }
-        else{
-            throw new Exception("Error invalid game code");
-        }
+        else{throw new Exception("Error invalid game code");}
         return gameData;
     }
 
     public Collection<GameData> listGames() throws Exception{
         Gson gson = new Gson();
         URI uri = new URI(urlBase +"/game");
-        HttpURLConnection httpConn = (HttpURLConnection) uri.toURL().openConnection();
-        httpConn.setRequestMethod("GET");
-        httpConn.addRequestProperty("authorization",authData.authToken());
+        HttpURLConnection httpConn = ServerFacadeHelpers.getConnAndAuth(uri,"GET",authData.authToken());
         //get response
         int resCode = httpConn.getResponseCode();
         if(resCode == HttpURLConnection.HTTP_OK){
@@ -136,9 +106,7 @@ public class ServerFacade {
                 gameList = (ArrayList<GameData>) res.games();
             }
         }
-        else{
-            getErrorMessage(httpConn);
-        }
+        else{ServerFacadeHelpers.getErrorMessage(httpConn);}
         return gameList;
     }
 
@@ -146,20 +114,14 @@ public class ServerFacade {
         Gson gson = new Gson();
         JoinJson joinData = new JoinJson(team,gameID);
         URI uri = new URI(urlBase +"/game");
-        HttpURLConnection httpConn = (HttpURLConnection) uri.toURL().openConnection();
-        httpConn.setRequestMethod("PUT");
-        httpConn.addRequestProperty("authorization",authData.authToken());
+        HttpURLConnection httpConn = ServerFacadeHelpers.getConnAndAuth(uri,"PUT",authData.authToken());
         httpConn.setDoOutput(true);
-        try (OutputStream outputStream = httpConn.getOutputStream()) {
-            String json = gson.toJson(joinData);
-            outputStream.write(json.getBytes(StandardCharsets.UTF_8));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        String json = gson.toJson(joinData);
+        ServerFacadeHelpers.writeBody(httpConn,json);
         //get response
         int resCode = httpConn.getResponseCode();
         if (resCode != HttpURLConnection.HTTP_OK){
-            getErrorMessage(httpConn);
+            ServerFacadeHelpers.getErrorMessage(httpConn);
         }
     }
 
@@ -172,12 +134,8 @@ public class ServerFacade {
         //this is how to write to the headers
         httpConn.addRequestProperty("Content-Type", "application/json");
         //write to body
-        try (OutputStream outputStream = httpConn.getOutputStream()) {
-            String json = gson.toJson(userData);
-            outputStream.write(json.getBytes(StandardCharsets.UTF_8));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        String json = gson.toJson(userData);
+        ServerFacadeHelpers.writeBody(httpConn,json);
         //get response
         int resCode = httpConn.getResponseCode();
         if (resCode == HttpURLConnection.HTTP_OK) {
@@ -185,17 +143,6 @@ public class ServerFacade {
                 InputStreamReader inputStreamReader = new InputStreamReader(resBody);
                 authData = gson.fromJson(inputStreamReader, AuthData.class);
             }
-        } else {
-            getErrorMessage(httpConn);
-        }
+        } else {ServerFacadeHelpers.getErrorMessage(httpConn);}
     }
-    private void getErrorMessage(HttpURLConnection httpConn) throws Exception{
-        Gson gson = new Gson();
-        try (InputStream resBody = httpConn.getErrorStream()) {
-            InputStreamReader inputStreamReader = new InputStreamReader(resBody);
-            ErrorRes errorRes = gson.fromJson(inputStreamReader, ErrorRes.class);
-            throw new Exception(errorRes.message());
-        }
-    }
-
 }
