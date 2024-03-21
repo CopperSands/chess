@@ -1,5 +1,8 @@
 import chess.*;
+import model.GameData;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -27,6 +30,12 @@ public class Main {
                 else if (option.contains("create")){
                     String [] create = option.split(" +");
                     if(create.length == 2 && create[0].equals("create")){
+                        try{
+                            int gameID = serverFacade.createGame(create[1]);
+                            System.out.println("GameID is " + gameID);
+                        } catch (Exception e) {
+                            System.out.println(e.getMessage());
+                        }
                         //call create request
                     }
                     else{
@@ -35,6 +44,12 @@ public class Main {
                 }
                 else if (option.equals("list")){
                     //call list request
+                    try{
+                        ArrayList<GameData> gameList = (ArrayList<GameData>) serverFacade.listGames();
+                        printGames(gameList);
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
                 }
                 else if (option.contains("join")){
                     String [] join = option.split(" +");
@@ -150,6 +165,15 @@ public class Main {
         System.out.println("\t observe <gameID> - observe a game");
         System.out.println("\t help - show possible commands");
         System.out.println("\t logout - logout");
+    }
+
+    private static void printGames(ArrayList<GameData> gameList){
+        System.out.println("select code   gameID   game name   White Player  Black Player");
+        for(int i = 0; i < gameList.size(); i++){
+            GameData game = gameList.get(i);
+            System.out.println((i + 1) + " " + game.gameID() + " " + game.gameName() + " " + game.whiteUsername()
+                    + " " + game.blackUsername());
+        }
     }
 
 

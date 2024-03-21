@@ -1,5 +1,6 @@
 import com.google.gson.Gson;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 
 import java.io.IOException;
@@ -8,17 +9,20 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class ServerFacade {
 
     private String urlBase;
     private AuthData authData;
+    private ArrayList<GameData> gameList;
 
     public ServerFacade(int port){
         urlBase = "http://localhost:" + Integer.toString(port);
         authData = null;
+        gameList = null;
     }
 
     /**
@@ -58,6 +62,58 @@ public class ServerFacade {
             getErrorMessage(httpConn);
         }
     }
+
+    public int createGame(String gameName) throws Exception{
+        int gameID = -1;
+        Gson gson = new Gson();
+        CreateGameJson createGame = new CreateGameJson(gameName);
+        URI uri = new URI(urlBase +"/game");
+        HttpURLConnection httpConn = (HttpURLConnection) uri.toURL().openConnection();
+        httpConn.setRequestMethod("POST");
+        httpConn.addRequestProperty("authorization",authData.authToken());
+        httpConn.setDoOutput(true);
+        try (OutputStream outputStream = httpConn.getOutputStream()) {
+            String json = gson.toJson(createGame);
+            outputStream.write(json.getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //get response
+        int resCode = httpConn.getResponseCode();
+        if(resCode == HttpURLConnection.HTTP_OK){
+            try (InputStream resBody = httpConn.getInputStream()) {
+                InputStreamReader inputStreamReader = new InputStreamReader(resBody);
+                CreateGameRes res = gson.fromJson(inputStreamReader, CreateGameRes.class);
+                gameID = res.gameID();
+            }
+        }
+        else{
+            getErrorMessage(httpConn);
+        }
+        return gameID;
+    }
+
+    public Collection<GameData> listGames() throws Exception{
+        Gson gson = new Gson();
+        URI uri = new URI(urlBase +"/game");
+        HttpURLConnection httpConn = (HttpURLConnection) uri.toURL().openConnection();
+        httpConn.setRequestMethod("GET");
+        httpConn.addRequestProperty("authorization",authData.authToken());
+        //get response
+        int resCode = httpConn.getResponseCode();
+        if(resCode == HttpURLConnection.HTTP_OK){
+            try (InputStream resBody = httpConn.getInputStream()) {
+                InputStreamReader inputStreamReader = new InputStreamReader(resBody);
+                GameList res = gson.fromJson(inputStreamReader, GameList.class);
+                gameList = (ArrayList<GameData>) res.games();
+            }
+        }
+        else{
+            getErrorMessage(httpConn);
+        }
+        return gameList;
+    }
+
     private void postRegLogin(URI uri, UserData userData) throws Exception {
         Gson gson = new Gson();
         HttpURLConnection httpConn = (HttpURLConnection) uri.toURL().openConnection();
