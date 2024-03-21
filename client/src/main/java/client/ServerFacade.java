@@ -76,9 +76,9 @@ public class ServerFacade {
         int i = id -1;
         GameData gameData = null;
         if(gameList == null){
-            throw new Exception("Error call list");
+            throw new Exception("Error call list before join");
         }
-        else if ((i >= 0) && (i  <= gameList.size())){
+        else if ((i >= 0) && (i  < gameList.size())){
             //get the gameID and update the game
             int gameID = gameList.get(i).gameID();
             putGame(team,gameID);
