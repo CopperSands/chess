@@ -93,6 +93,33 @@ public class ServerFacade {
         return gameID;
     }
 
+    public GameData joinGame(int id, String team) throws Exception{
+        //check if game exits
+        int i = id -1;
+        GameData gameData = null;
+        if(gameList == null){
+            throw new Exception("Error call list");
+        }
+        else if ((i >= 0) && (i  <= gameList.size())){
+            //get the gameID and update the game
+            int gameID = gameList.get(i).gameID();
+            putGame(team,gameID);
+            // call list to update
+            listGames();
+            // get updated game
+            for (GameData game : gameList){
+                if (game.gameID() == gameID){
+                    gameData = game;
+                    break;
+                }
+            }
+        }
+        else{
+            throw new Exception("Error invalid game code");
+        }
+        return gameData;
+    }
+
     public Collection<GameData> listGames() throws Exception{
         Gson gson = new Gson();
         URI uri = new URI(urlBase +"/game");
@@ -112,6 +139,27 @@ public class ServerFacade {
             getErrorMessage(httpConn);
         }
         return gameList;
+    }
+
+    private void putGame(String team, int gameID) throws Exception{
+        Gson gson = new Gson();
+        JoinJson joinData = new JoinJson(team,gameID);
+        URI uri = new URI(urlBase +"/game");
+        HttpURLConnection httpConn = (HttpURLConnection) uri.toURL().openConnection();
+        httpConn.setRequestMethod("PUT");
+        httpConn.addRequestProperty("authorization",authData.authToken());
+        httpConn.setDoOutput(true);
+        try (OutputStream outputStream = httpConn.getOutputStream()) {
+            String json = gson.toJson(joinData);
+            outputStream.write(json.getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //get response
+        int resCode = httpConn.getResponseCode();
+        if (resCode != HttpURLConnection.HTTP_OK){
+            getErrorMessage(httpConn);
+        }
     }
 
     private void postRegLogin(URI uri, UserData userData) throws Exception {

@@ -54,13 +54,25 @@ public class Main {
                 else if (option.contains("join")){
                     String [] join = option.split(" +");
                     if ((join.length == 3 || join.length == 2) && join[0].equals("join")){
+                        GameData game;
+                        //call join request
                         if (join.length == 3 ){
                             join[2] = join[2].toUpperCase(Locale.ROOT);
+                            try{
+                                game = serverFacade.joinGame(Integer.parseInt(join[1]),join[2]);
+                            } catch (Exception e) {
+                                System.out.println(e.getMessage());
+                            }
                         }
                         for(String a: join){
                             System.out.println(a);
                         }
-                        //call join request
+                        try{
+                            game = serverFacade.joinGame(Integer.parseInt(join[1]),null);
+                            game.game().
+                        } catch (Exception e) {
+                            System.out.println(e.getMessage());
+                        }
                     }
                 }
                 else if (option.contains("observe")){
@@ -176,6 +188,7 @@ public class Main {
         }
     }
 
-
-
+    private static void printBoard(ChessBoard board){
+        System.out.
+    }
 }
