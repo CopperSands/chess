@@ -33,12 +33,12 @@ public class Main {
                     String [] create = option.split(" +");
                     if(create.length == 2 && create[0].equals("create")){
                         try{
+                            //call create request
                             int gameID = serverFacade.createGame(create[1]);
                             System.out.println("GameID is " + gameID);
                         } catch (Exception e) {
                             System.out.println(e.getMessage());
                         }
-                        //call create request
                     }
                     else{
                         System.out.println("invalid format");
@@ -63,6 +63,7 @@ public class Main {
                             try{
                                 game = serverFacade.joinGame(Integer.parseInt(join[1]),join[2]);
                                 printBoard(game.game().getBoard());
+                                printReverseBoard(game.game().getBoard());
                             } catch (Exception e) {
                                 System.out.println(e.getMessage());
                             }
@@ -73,6 +74,7 @@ public class Main {
                         try{
                             game = serverFacade.joinGame(Integer.parseInt(join[1]),null);
                             printBoard(game.game().getBoard());
+                            printReverseBoard(game.game().getBoard());
                         } catch (Exception e) {
                             System.out.println(e.getMessage());
                         }
@@ -85,6 +87,7 @@ public class Main {
                         try{
                             GameData game = serverFacade.joinGame(Integer.parseInt(observe[1]),null);
                             printBoard(game.game().getBoard());
+                            printReverseBoard(game.game().getBoard());
                         } catch (Exception e) {
                             System.out.println(e.getMessage());
                         }
@@ -208,71 +211,90 @@ public class Main {
                 ChessPosition pos = new ChessPosition(row,col);
                 ChessPiece piece = board.getPiece(pos);
                 //get background color for odd and even
-                String backColor;
-                if ((row % 2) == 0){
-                    if ((col % 2) == 0){
-                        backColor = SET_BG_COLOR_WHITE;
-                    }
-                    else{
-                        backColor = SET_BG_COLOR_BLUE;
-                    }
-                }else{
-                    if(col % 2 == 0){
-                        backColor = SET_BG_COLOR_BLUE;
-                    }
-                    else{
-                        backColor = SET_BG_COLOR_WHITE;
-                    }
-                }
-                if (piece == null){
-                    System.out.print(backColor +EMPTY);
-                }
-                else if (piece.getPieceType() == ChessPiece.PieceType.PAWN){
-                    if (piece.getTeamColor() == ChessGame.TeamColor.WHITE){
-                        System.out.print(backColor + WHITE_PAWN);
-                    } else{
-                        System.out.print(backColor + BLACK_PAWN);
-                    }
-                }
-                else if (piece.getPieceType() == ChessPiece.PieceType.BISHOP){
-                    if (piece.getTeamColor() == ChessGame.TeamColor.WHITE){
-                        System.out.print(backColor + WHITE_BISHOP);
-                    } else{
-                        System.out.print(backColor + BLACK_BISHOP);
-                    }
-                }
-                else if (piece.getPieceType() == ChessPiece.PieceType.KNIGHT){
-                    if (piece.getTeamColor() == ChessGame.TeamColor.WHITE){
-                        System.out.print(backColor + WHITE_KNIGHT);
-                    }else{
-                        System.out.print(backColor + BLACK_KNIGHT );
-                    }
-                }
-                else if (piece.getPieceType() == ChessPiece.PieceType.ROOK){
-                    if (piece.getTeamColor() == ChessGame.TeamColor.WHITE){
-                        System.out.print(backColor + WHITE_ROOK);
-                    }else{
-                        System.out.print(backColor + BLACK_ROOK);
-                    }
-                }
-                else if (piece.getPieceType() == ChessPiece.PieceType.KING){
-                    if (piece.getTeamColor() == ChessGame.TeamColor.WHITE){
-                        System.out.print(backColor + WHITE_KING);
-                    }else{
-                        System.out.print(backColor + BLACK_KING);
-                    }
-                }
-                else if (piece.getPieceType() == ChessPiece.PieceType.QUEEN){
-                    if (piece.getTeamColor() == ChessGame.TeamColor.WHITE){
-                        System.out.print(backColor + WHITE_QUEEN);
-                    }else{
-                        System.out.print(backColor + BLACK_QUEEN);
-                    }
-                }
+                printSquare(row,col,piece);
             }
             System.out.print(SET_BG_COLOR_DARK_GREY + count + "\n");
             count++;
         }
         System.out.println(SET_TEXT_ITALIC + "  " + Header + RESET_TEXT_ITALIC);
+    }
+    private static void printReverseBoard(ChessBoard board){
+        String Header = "  a  b   c  d   e  f   g   h ";
+        System.out.println(SET_TEXT_ITALIC + "  " + Header + RESET_TEXT_ITALIC);
+        int count = 8;
+        for (int row = 1; row < 9; row++){
+            System.out.print(count + " ");
+            for (int col = 1; col < 9; col++){
+                ChessPosition pos = new ChessPosition(row,col);
+                ChessPiece piece = board.getPiece(pos);
+                printSquare(row,col,piece);
+            }
+            System.out.print(SET_BG_COLOR_DARK_GREY + count + "\n");
+            count--;
+        }
+        System.out.println(SET_TEXT_ITALIC + "  " + Header + RESET_TEXT_ITALIC);
+    }
+    private static void printSquare(int row, int col, ChessPiece piece){
+        String backColor;
+        if ((row % 2) == 0){
+            if ((col % 2) == 0){
+                backColor = SET_BG_COLOR_WHITE;
+            }
+            else{
+                backColor = SET_BG_COLOR_BLUE;
+            }
+        }else{
+            if(col % 2 == 0){
+                backColor = SET_BG_COLOR_BLUE;
+            }
+            else{
+                backColor = SET_BG_COLOR_WHITE;
+            }
+        }
+        if (piece == null){
+            System.out.print(backColor +EMPTY);
+        }
+        else if (piece.getPieceType() == ChessPiece.PieceType.PAWN){
+            if (piece.getTeamColor() == ChessGame.TeamColor.WHITE){
+                System.out.print(backColor + SET_TEXT_COLOR_LIGHT_GREY + WHITE_PAWN + SET_TEXT_COLOR_WHITE);
+            } else{
+                System.out.print(backColor  + SET_TEXT_COLOR_BLACK + BLACK_PAWN + SET_TEXT_COLOR_WHITE);
+            }
+        }
+        else if (piece.getPieceType() == ChessPiece.PieceType.BISHOP){
+            if (piece.getTeamColor() == ChessGame.TeamColor.WHITE){
+                System.out.print(backColor + SET_TEXT_COLOR_LIGHT_GREY + WHITE_BISHOP + SET_TEXT_COLOR_WHITE);
+            } else{
+                System.out.print(backColor + SET_TEXT_COLOR_BLACK +BLACK_BISHOP + SET_TEXT_COLOR_WHITE);
+            }
+        }
+        else if (piece.getPieceType() == ChessPiece.PieceType.KNIGHT){
+            if (piece.getTeamColor() == ChessGame.TeamColor.WHITE){
+                System.out.print(backColor + SET_TEXT_COLOR_LIGHT_GREY + WHITE_KNIGHT + SET_TEXT_COLOR_WHITE);
+            }else{
+                System.out.print(backColor + SET_TEXT_COLOR_BLACK + BLACK_KNIGHT + SET_TEXT_COLOR_WHITE);
+            }
+        }
+        else if (piece.getPieceType() == ChessPiece.PieceType.ROOK){
+            if (piece.getTeamColor() == ChessGame.TeamColor.WHITE){
+                System.out.print(backColor + SET_TEXT_COLOR_LIGHT_GREY + WHITE_ROOK + SET_TEXT_COLOR_WHITE);
+            }else{
+                System.out.print(backColor + SET_TEXT_COLOR_BLACK + BLACK_ROOK + SET_TEXT_COLOR_WHITE);
+            }
+        }
+        else if (piece.getPieceType() == ChessPiece.PieceType.KING){
+            if (piece.getTeamColor() == ChessGame.TeamColor.WHITE){
+                System.out.print(backColor + SET_TEXT_COLOR_LIGHT_GREY + WHITE_KING + SET_TEXT_COLOR_WHITE);
+            }else{
+                System.out.print(backColor + SET_TEXT_COLOR_BLACK + BLACK_KING + SET_TEXT_COLOR_WHITE);
+            }
+        }
+        else if (piece.getPieceType() == ChessPiece.PieceType.QUEEN){
+            if (piece.getTeamColor() == ChessGame.TeamColor.WHITE){
+                System.out.print(backColor + SET_TEXT_COLOR_LIGHT_GREY + WHITE_QUEEN + SET_TEXT_COLOR_WHITE);
+            }else{
+                System.out.print(backColor + SET_TEXT_COLOR_BLACK + BLACK_QUEEN + SET_TEXT_COLOR_WHITE);
+            }
+        }
     }
 }
