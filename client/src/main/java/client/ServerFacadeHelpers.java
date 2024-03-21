@@ -1,3 +1,5 @@
+package client;
+
 import clientRecords.ErrorRes;
 import com.google.gson.Gson;
 

@@ -1,3 +1,5 @@
+import client.ClientPrint;
+import client.ServerFacade;
 import clientRecords.GameLoop;
 import model.GameData;
 

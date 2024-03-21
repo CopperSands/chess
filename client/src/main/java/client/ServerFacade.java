@@ -1,3 +1,5 @@
+package client;
+
 import clientRecords.*;
 import com.google.gson.Gson;
 import model.AuthData;
@@ -20,7 +22,7 @@ public class ServerFacade {
 
     public ServerFacade(int port){
         urlBase = "http://localhost:" + port;
-        authData = null;
+        authData = new AuthData(null,null);
         gameList = null;
     }
 
@@ -64,7 +66,8 @@ public class ServerFacade {
                 gameID = res.gameID();
             }
         }
-        else{ServerFacadeHelpers.getErrorMessage(httpConn);}
+        else{
+            ServerFacadeHelpers.getErrorMessage(httpConn);}
         return gameID;
     }
 
@@ -106,7 +109,8 @@ public class ServerFacade {
                 gameList = (ArrayList<GameData>) res.games();
             }
         }
-        else{ServerFacadeHelpers.getErrorMessage(httpConn);}
+        else{
+            ServerFacadeHelpers.getErrorMessage(httpConn);}
         return gameList;
     }
 
@@ -143,6 +147,7 @@ public class ServerFacade {
                 InputStreamReader inputStreamReader = new InputStreamReader(resBody);
                 authData = gson.fromJson(inputStreamReader, AuthData.class);
             }
-        } else {ServerFacadeHelpers.getErrorMessage(httpConn);}
+        } else {
+            ServerFacadeHelpers.getErrorMessage(httpConn);}
     }
 }
