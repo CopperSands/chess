@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Scanner;
+import static ui.EscapeSequences.*;
+
 
 public class Main {
     public static void main(String[] args) {
@@ -60,6 +62,7 @@ public class Main {
                             join[2] = join[2].toUpperCase(Locale.ROOT);
                             try{
                                 game = serverFacade.joinGame(Integer.parseInt(join[1]),join[2]);
+                                printBoard(game.game().getBoard());
                             } catch (Exception e) {
                                 System.out.println(e.getMessage());
                             }
@@ -69,7 +72,7 @@ public class Main {
                         }
                         try{
                             game = serverFacade.joinGame(Integer.parseInt(join[1]),null);
-                            game.game().
+                            printBoard(game.game().getBoard());
                         } catch (Exception e) {
                             System.out.println(e.getMessage());
                         }
@@ -189,6 +192,80 @@ public class Main {
     }
 
     private static void printBoard(ChessBoard board){
-        System.out.
+        String Header = " h g f e d c b a ";
+        //print black top
+        System.out.println(SET_TEXT_ITALIC +Header + RESET_TEXT_ITALIC);
+        int count = 1;
+        for (int row = 8; row > 0; row--){
+            System.out.print(count + " ");
+            for (int col = 8; col > 0; col--){
+                ChessPosition pos = new ChessPosition(row,col);
+                ChessPiece piece = board.getPiece(pos);
+                //get background color for odd and even
+                String backColor;
+                if ((row % 2) == 0){
+                    if ((col % 2) == 0){
+                        backColor = SET_BG_COLOR_WHITE;
+                    }
+                    else{
+                        backColor = SET_BG_COLOR_BLUE;
+                    }
+                }else{
+                    if(col % 2 == 0){
+                        backColor = SET_BG_COLOR_BLUE;
+                    }
+                    else{
+                        backColor = SET_BG_COLOR_WHITE;
+                    }
+                }
+                if (piece == null){
+                    System.out.print(backColor +EMPTY + " ");
+                }
+                else if (piece.getPieceType() == ChessPiece.PieceType.PAWN){
+                    if (piece.getTeamColor() == ChessGame.TeamColor.WHITE){
+                        System.out.print(backColor + WHITE_PAWN + " ");
+                    } else{
+                        System.out.print(backColor + BLACK_PAWN + " ");
+                    }
+                }
+                else if (piece.getPieceType() == ChessPiece.PieceType.BISHOP){
+                    if (piece.getTeamColor() == ChessGame.TeamColor.WHITE){
+                        System.out.print(backColor + WHITE_BISHOP + " ");
+                    } else{
+                        System.out.print(backColor + BLACK_BISHOP + " ");
+                    }
+                }
+                else if (piece.getPieceType() == ChessPiece.PieceType.KNIGHT){
+                    if (piece.getTeamColor() == ChessGame.TeamColor.WHITE){
+                        System.out.print(backColor + WHITE_KNIGHT + " ");
+                    }else{
+                        System.out.print(backColor + BLACK_KNIGHT + " ");
+                    }
+                }
+                else if (piece.getPieceType() == ChessPiece.PieceType.ROOK){
+                    if (piece.getTeamColor() == ChessGame.TeamColor.WHITE){
+                        System.out.print(backColor + WHITE_ROOK + " ");
+                    }else{
+                        System.out.print(backColor + BLACK_ROOK + " ");
+                    }
+                }
+                else if (piece.getPieceType() == ChessPiece.PieceType.KING){
+                    if (piece.getTeamColor() == ChessGame.TeamColor.WHITE){
+                        System.out.print(backColor + WHITE_KING + " ");
+                    }else{
+                        System.out.print(backColor + BLACK_KING  + " ");
+                    }
+                }
+                else if (piece.getPieceType() == ChessPiece.PieceType.QUEEN){
+                    if (piece.getTeamColor() == ChessGame.TeamColor.WHITE){
+                        System.out.print(backColor + WHITE_QUEEN + " ");
+                    }else{
+                        System.out.print(backColor + BLACK_QUEEN + " ");
+                    }
+                }
+            }
+            System.out.print(RESET_BG_COLOR + count);
+        }
+        System.out.println(SET_TEXT_ITALIC +Header + RESET_TEXT_ITALIC);
     }
 }
