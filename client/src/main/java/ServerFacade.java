@@ -18,6 +18,7 @@ public class ServerFacade {
 
     public ServerFacade(int port){
         urlBase = "http://localhost:" + Integer.toString(port);
+        authData = null;
     }
 
     /**
@@ -27,10 +28,38 @@ public class ServerFacade {
      * @param email
      * @throws Exception
      */
-    public void registerRequest(String username, String password, String email) throws Exception{
-        Gson gson = new Gson();
+    public void registerRequest(String username, String password, String email) throws Exception {
         UserData userData = new UserData(username, password, email);
         URI uri = new URI(urlBase + "/user");
+        postRegLogin(uri,userData);
+    }
+
+    /**
+     * Sends a login request to the server
+     * @param username
+     * @param password
+     * @throws Exception
+     */
+    public void login(String username, String password) throws Exception{
+        UserData userData = new UserData(username, password, null);
+        URI uri = new URI(urlBase + "/session");
+        postRegLogin(uri,userData);
+    }
+
+    public void logout() throws Exception{
+        URI uri = new URI(urlBase +"/session");
+        HttpURLConnection httpConn = (HttpURLConnection) uri.toURL().openConnection();
+        httpConn.setRequestMethod("DELETE");
+        //set authToken
+        httpConn.addRequestProperty("authorization",authData.authToken());
+        //get response
+        int resCode = httpConn.getResponseCode();
+        if (resCode != HttpURLConnection.HTTP_OK){
+            getErrorMessage(httpConn);
+        }
+    }
+    private void postRegLogin(URI uri, UserData userData) throws Exception {
+        Gson gson = new Gson();
         HttpURLConnection httpConn = (HttpURLConnection) uri.toURL().openConnection();
         httpConn.setRequestMethod("POST");
         //this must be set to write data to request
@@ -38,7 +67,7 @@ public class ServerFacade {
         //this is how to write to the headers
         httpConn.addRequestProperty("Content-Type", "application/json");
         //write to body
-        try(OutputStream outputStream = httpConn.getOutputStream()){
+        try (OutputStream outputStream = httpConn.getOutputStream()) {
             String json = gson.toJson(userData);
             outputStream.write(json.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
@@ -46,20 +75,22 @@ public class ServerFacade {
         }
         //get response
         int resCode = httpConn.getResponseCode();
-        if (resCode == 403){
-            throw new Exception("Error username is taken");
-        }
-        else if(resCode == 400){
-            throw new Exception("Error bad request");
-        }
-        else if (resCode == 500){
-            throw new Exception("Internal Server Error");
-        }
-        try(InputStream resBody = httpConn.getInputStream()){
-            InputStreamReader inputStreamReader = new InputStreamReader(resBody);
-            authData = gson.fromJson(inputStreamReader,AuthData.class);
+        if (resCode == HttpURLConnection.HTTP_OK) {
+            try (InputStream resBody = httpConn.getInputStream()) {
+                InputStreamReader inputStreamReader = new InputStreamReader(resBody);
+                authData = gson.fromJson(inputStreamReader, AuthData.class);
+            }
+        } else {
+            getErrorMessage(httpConn);
         }
     }
-
+    private void getErrorMessage(HttpURLConnection httpConn) throws Exception{
+        Gson gson = new Gson();
+        try (InputStream resBody = httpConn.getErrorStream()) {
+            InputStreamReader inputStreamReader = new InputStreamReader(resBody);
+            ErrorRes errorRes = gson.fromJson(inputStreamReader, ErrorRes.class);
+            throw new Exception(errorRes.message());
+        }
+    }
 
 }

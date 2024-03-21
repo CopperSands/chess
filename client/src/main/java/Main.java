@@ -56,6 +56,11 @@ public class Main {
                 }
                 else if (option.equals("logout")){
                     //call logout request
+                    try{
+                        serverFacade.logout();
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
                     isLoggedIn = false;
                 }
                 else{
@@ -100,14 +105,7 @@ public class Main {
                     serverFacade.registerRequest(registration[1],registration[2],registration[3]);
                     isLoggedIn = true;
                 }catch (Exception e){
-                    if (e.getMessage().equals("Internal Server Error") ||
-                            e.getMessage().equals("Error username is taken") ||
-                            e.getMessage().equals("Error bad request")){
                         System.out.println(e.getMessage());
-                    }
-                    else{
-                        System.out.println("Application Error");
-                    }
                 }
             }
             else{
@@ -118,12 +116,16 @@ public class Main {
             String [] login = option.split(" +");
             if (login.length == 3 && login[0].equals("login")){
                 //call login request
-                isLoggedIn = true;
+                try{
+                    serverFacade.login(login[1], login[2]);
+                    isLoggedIn = true;
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
             }
             else{
                 System.out.println("Invalid login format");
             }
-            System.out.println("login");
         }
         else if (option.equals("quit") || option.equals("Quit")){
             System.out.println("quit");
