@@ -1,3 +1,4 @@
+import clientRecords.*;
 import com.google.gson.Gson;
 import model.AuthData;
 import model.GameData;
@@ -20,7 +21,7 @@ public class ServerFacade {
     private ArrayList<GameData> gameList;
 
     public ServerFacade(int port){
-        urlBase = "http://localhost:" + Integer.toString(port);
+        urlBase = "http://localhost:" + port;
         authData = null;
         gameList = null;
     }
