@@ -55,12 +55,13 @@ public class Main {
                                 ClientPrint.printBoard(game.game().getBoard());
                                 ClientPrint.printReverseBoard(game.game().getBoard());
                             } catch (Exception e) {System.out.println(e.getMessage());}
+                        }else{
+                            try{
+                                game = serverFacade.joinGame(Integer.parseInt(join[1]),null);
+                                ClientPrint.printBoard(game.game().getBoard());
+                                ClientPrint.printReverseBoard(game.game().getBoard());
+                            } catch (Exception e) {System.out.println(e.getMessage());}
                         }
-                        try{
-                            game = serverFacade.joinGame(Integer.parseInt(join[1]),null);
-                            ClientPrint.printBoard(game.game().getBoard());
-                            ClientPrint.printReverseBoard(game.game().getBoard());
-                        } catch (Exception e) {System.out.println(e.getMessage());}
                     }
                 } else if (option.contains("observe")){
                     String [] observe = option.split(" +");
