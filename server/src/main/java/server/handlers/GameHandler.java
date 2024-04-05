@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import dataAccess.*;
 import model.AuthData;
 import model.GameData;
-import model.UserData;
 import server.*;
 import service.*;
 import spark.Request;
@@ -12,32 +11,22 @@ import spark.Response;
 
 import java.util.Collection;
 
-public class HttpHandler {
+public class GameHandler {
     private AuthDAO authDAO;
-    private UserDAO userDAO;
     private GameDAO gameDAO;
-    private RegisterService registerService;
-    private LogoutService logoutService;
-    private LoginService loginService;
     private ListGamesService listGamesService;
     private JoinGameService joinGameService;
     private CreateGameService createGameService;
-    private ClearAppService clearAppService;
 
-    public HttpHandler(){
+    public GameHandler(){
         authDAO = new PersistentAuthDAO();
-        userDAO = new PersistentUserDAO();
         gameDAO = new PersistentGameDAO();
-        registerService = new RegisterService(userDAO,authDAO);
-        logoutService = new LogoutService(authDAO);
-        loginService = new LoginService(userDAO,authDAO);
         listGamesService = new ListGamesService(authDAO,gameDAO);
         joinGameService = new JoinGameService(authDAO,gameDAO);
         createGameService = new CreateGameService(authDAO,gameDAO);
-        clearAppService = new ClearAppService(authDAO,userDAO,gameDAO);
     }
 
-    private Object listGamesHandler(Request req, Response res){
+    public Object listGamesHandler(Request req, Response res){
         Gson gson = new Gson();
         String authToken = req.headers("authorization");
         try{
@@ -56,7 +45,7 @@ public class HttpHandler {
         }
     }
 
-    private Object createGameHandler(Request req, Response res){
+    public Object createGameHandler(Request req, Response res){
         Gson gson = new Gson();
         String authToken = req.headers("authorization");
         CreateGameReq gameReq = gson.fromJson(req.body(), CreateGameReq.class);
