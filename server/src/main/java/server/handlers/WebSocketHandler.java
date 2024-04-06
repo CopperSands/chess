@@ -9,6 +9,7 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.eclipse.jetty.websocket.api.Session;
 import service.GameService;
 import service.JoinGameService;
+import webSocketMessages.serverMessages.ErrorMessage;
 import webSocketMessages.serverMessages.LoadMessage;
 import webSocketMessages.serverMessages.NoticeMessage;
 import webSocketMessages.serverMessages.ServerMessage;
@@ -57,8 +58,8 @@ public class WebSocketHandler {
     }
 
     private void joinGame(Session session, String message, GameService gameService){
+        Gson gson = new Gson();
         try {
-            Gson gson = new Gson();
             JoinCommand joinCommand = gson.fromJson(message,JoinCommand.class);
             ChessGame game = getGame(joinCommand);
             String result = "Successful join";
@@ -76,6 +77,13 @@ public class WebSocketHandler {
         } catch (IOException e) {
             System.out.println("Error sending message");
         } catch (DataAccessException e) {
+            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR,e.getMessage());
+            String error = gson.toJson(errorMessage);
+            try {
+                session.getRemote().sendString(error);
+            } catch (IOException ex) {
+                System.out.println(e.getMessage());
+            }
             System.out.println(e.getMessage());
         }
     }

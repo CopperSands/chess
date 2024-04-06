@@ -1,6 +1,7 @@
 package service;
 
 import chess.ChessGame;
+import com.google.gson.Gson;
 import dataAccess.AuthDAO;
 import dataAccess.DataAccessException;
 import dataAccess.GameDAO;
@@ -44,14 +45,20 @@ public class GameService {
         }
     }
 
-    private boolean isValidTeam(String clientColor, String username){
+    private boolean isValidTeam(String clientColor, String username) throws DataAccessException{
         boolean isValid = false;
         if (clientColor.equals("WHITE")){
+            if (game.whiteUsername() == null){
+                throw new DataAccessException("Error empty player field");
+            }
             if (game.whiteUsername().equals(username)){
                 isValid = true;
             }
         }
         else if (clientColor.equals("BLACK")){
+            if (game.blackUsername() == null) {
+                throw new DataAccessException("Error empty player field");
+            }
             if (game.blackUsername().equals(username)){
                 isValid = true;
             }
