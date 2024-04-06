@@ -19,7 +19,12 @@ public class JoinCommand extends UserGameCommand{
     }
 
     public String getPlayerColor() {
-        return playerColor.toString();
+        if (playerColor == null){
+            return null;
+        }
+        else{
+            return playerColor.toString();
+        }
     }
 
     @Override

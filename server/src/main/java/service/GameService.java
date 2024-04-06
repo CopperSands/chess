@@ -27,12 +27,11 @@ public class GameService {
                 if (!isValidTeam(clientColor, foundToken.username())) {
                     throw new DataAccessException("Error team already taken");
                 }
-                return game.game();
             }
+            return game.game();
         }catch (DataAccessException e){
             throw new DataAccessException(e.getMessage());
         }
-        return null;
     }
 
     private void joinValidation(AuthData foundToken,int gameID) throws DataAccessException{
