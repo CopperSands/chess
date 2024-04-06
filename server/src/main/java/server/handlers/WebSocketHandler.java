@@ -7,6 +7,8 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.eclipse.jetty.websocket.api.Session;
 import service.JoinGameService;
+import webSocketMessages.serverMessages.NoticeMessage;
+import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.JoinCommand;
 import webSocketMessages.userCommands.UserGameCommand;
 import webSocketMessages.userCommands.UserGameCommand.CommandType;
@@ -42,9 +44,11 @@ public class WebSocketHandler {
             System.out.println("wants to join game");
             String result = joinGame(message);
             System.out.println(result);
+            NoticeMessage notice = new NoticeMessage(ServerMessage.ServerMessageType.NOTIFICATION,result);
             try {
                 System.out.println("in try");
-                session.getRemote().sendString("this " +result);
+                String res = gson.toJson(notice);
+                session.getRemote().sendString(res);
             } catch (IOException e) {
                 System.out.println("Error sending message");
             }
