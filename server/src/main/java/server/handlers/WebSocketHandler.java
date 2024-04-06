@@ -1,5 +1,6 @@
 package server.handlers;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import dataAccess.*;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
@@ -7,6 +8,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.eclipse.jetty.websocket.api.Session;
 import service.JoinGameService;
+import webSocketMessages.serverMessages.LoadMessage;
 import webSocketMessages.serverMessages.NoticeMessage;
 import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.JoinCommand;
@@ -42,30 +44,33 @@ public class WebSocketHandler {
         if (command.getCommandType() == CommandType.JOIN_PLAYER ||
                 command.getCommandType() == CommandType.JOIN_OBSERVER){
             System.out.println("wants to join game");
-            String result = joinGame(message);
-            System.out.println(result);
-            NoticeMessage notice = new NoticeMessage(ServerMessage.ServerMessageType.NOTIFICATION,result);
             try {
+                ChessGame game = joinGame(message);
+                String result = "Successful join";
+                LoadMessage notice = new LoadMessage(ServerMessage.ServerMessageType.LOAD_GAME,result,game);
+
                 System.out.println("in try");
                 String res = gson.toJson(notice);
                 session.getRemote().sendString(res);
             } catch (IOException e) {
                 System.out.println("Error sending message");
+            } catch (DataAccessException e) {
+                System.out.println(e.getMessage());
             }
         }
 
     }
 
-    private String joinGame(String message){
+    private ChessGame joinGame(String message) throws DataAccessException{
         Gson gson = new Gson();
         JoinCommand joinCommand = gson.fromJson(message,JoinCommand.class);
         try {
             JoinGameService joinGameService = new JoinGameService(authDAO,gameDAO);
-            joinGameService.joinGame(joinCommand.getAuthString(),joinCommand.getPlayerColor(),joinCommand.getGameID());
+            ChessGame game = joinGameService.loadGame(joinCommand.getAuthString(),joinCommand.getPlayerColor(),joinCommand.getGameID());
             System.out.println("Successful join");
-            return "Successfully Joined Game";
+            return game;
         } catch (DataAccessException e) {
-            return e.getMessage();
+            throw e;
         }
     }
 }

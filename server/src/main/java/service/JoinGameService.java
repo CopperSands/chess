@@ -27,13 +27,7 @@ public class JoinGameService {
     public void joinGame(String authToken, String clientColor, int gameID)throws DataAccessException {
         try{
             AuthData foundToken = authDAO.getAuth(authToken);
-            if (foundToken == null){
-                throw new DataAccessException("Error unauthorized");
-            }
-            game = gameDAO.getGame(gameID);
-            if (game == null){
-                throw new DataAccessException("Error bad request");
-            }
+            joinValidation(foundToken,gameID);
             if (clientColor != null) {
                 if (isTeamTaken(clientColor, foundToken.username())) {
                     throw new DataAccessException("Error already taken");
@@ -48,6 +42,34 @@ public class JoinGameService {
         }
 
     }
+
+    public ChessGame loadGame(String authToken, String clientColor, int gameID) throws DataAccessException{
+        try{
+            AuthData foundToken = authDAO.getAuth(authToken);
+            joinValidation(foundToken,gameID);
+            if (clientColor != null) {
+                if (isTeamTaken(clientColor, foundToken.username())) {
+                    throw new DataAccessException("Error team already taken");
+                }
+                return game.game();
+            }
+        }catch (DataAccessException e){
+            throw new DataAccessException(e.getMessage());
+        }
+        return null;
+    }
+
+
+    private void joinValidation(AuthData foundToken,int gameID) throws DataAccessException{
+        if (foundToken == null){
+            throw new DataAccessException("Error unauthorized");
+        }
+        game = gameDAO.getGame(gameID);
+        if (game == null){
+            throw new DataAccessException("Error bad request");
+        }
+    }
+
 
     private boolean isTeamTaken(String clientColor, String username){
         boolean isTaken = false;
