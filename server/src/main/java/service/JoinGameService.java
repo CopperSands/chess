@@ -35,7 +35,7 @@ public class JoinGameService {
                 throw new DataAccessException("Error bad request");
             }
             if (clientColor != null) {
-                if (isTeamTaken(clientColor)) {
+                if (isTeamTaken(clientColor, foundToken.username())) {
                     throw new DataAccessException("Error already taken");
                 }
                 updateGameData(foundToken.username(), clientColor);
@@ -49,15 +49,15 @@ public class JoinGameService {
 
     }
 
-    private boolean isTeamTaken(String clientColor){
+    private boolean isTeamTaken(String clientColor, String username){
         boolean isTaken = false;
         if (clientColor.equals("WHITE")){
-            if (game.whiteUsername() != null){
+            if (game.whiteUsername() != null && !game.whiteUsername().equals(username)){
                 isTaken = true;
             }
         }
         else if (clientColor.equals("BLACK")){
-            if (game.blackUsername() != null){
+            if (game.blackUsername() != null && !game.blackUsername().equals(username)){
                 isTaken = true;
             }
         }
