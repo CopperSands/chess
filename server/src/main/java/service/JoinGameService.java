@@ -27,7 +27,13 @@ public class JoinGameService {
     public void joinGame(String authToken, String clientColor, int gameID)throws DataAccessException {
         try{
             AuthData foundToken = authDAO.getAuth(authToken);
-            joinValidation(foundToken,gameID);
+            if (foundToken == null){
+                throw new DataAccessException("Error unauthorized");
+            }
+            game = gameDAO.getGame(gameID);
+            if (game == null){
+                throw new DataAccessException("Error bad request");
+            }
             if (clientColor != null) {
                 if (isTeamTaken(clientColor, foundToken.username())) {
                     throw new DataAccessException("Error already taken");
@@ -35,51 +41,21 @@ public class JoinGameService {
                 updateGameData(foundToken.username(), clientColor);
                 gameDAO.updateGame(game.gameID(), game);
             }
-
-
         }catch (DataAccessException e){
             throw new DataAccessException(e.getMessage());
         }
 
     }
-
-    public ChessGame loadGame(String authToken, String clientColor, int gameID) throws DataAccessException{
-        try{
-            AuthData foundToken = authDAO.getAuth(authToken);
-            joinValidation(foundToken,gameID);
-            if (clientColor != null) {
-                if (isTeamTaken(clientColor, foundToken.username())) {
-                    throw new DataAccessException("Error team already taken");
-                }
-                return game.game();
-            }
-        }catch (DataAccessException e){
-            throw new DataAccessException(e.getMessage());
-        }
-        return null;
-    }
-
-
-    private void joinValidation(AuthData foundToken,int gameID) throws DataAccessException{
-        if (foundToken == null){
-            throw new DataAccessException("Error unauthorized");
-        }
-        game = gameDAO.getGame(gameID);
-        if (game == null){
-            throw new DataAccessException("Error bad request");
-        }
-    }
-
 
     private boolean isTeamTaken(String clientColor, String username){
         boolean isTaken = false;
         if (clientColor.equals("WHITE")){
-            if (game.whiteUsername() != null && !game.whiteUsername().equals(username)){
+            if (game.whiteUsername() != null){
                 isTaken = true;
             }
         }
         else if (clientColor.equals("BLACK")){
-            if (game.blackUsername() != null && !game.blackUsername().equals(username)){
+            if (game.blackUsername() != null){
                 isTaken = true;
             }
         }
