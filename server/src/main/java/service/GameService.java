@@ -23,6 +23,9 @@ public class GameService {
         try{
             AuthData foundToken = authDAO.getAuth(authToken);
             validation(foundToken,gameID);
+            if(game.game().getResigned() != null){
+                throw new DataAccessException("Error game over");
+            }
             ChessGame.TeamColor teamTurn = game.game().getTeamTurn();
             if (!game.blackUsername().equals(foundToken.username()) &&
                     !game.whiteUsername().equals(foundToken.username())){
@@ -58,6 +61,26 @@ public class GameService {
         }catch (DataAccessException e){
             throw e;
         }
+    }
+
+    public void resignGame(String authToken, int gameID) throws DataAccessException {
+        AuthData foundToken = authDAO.getAuth(authToken);
+        validation(foundToken,gameID);
+        if (game.game().getResigned() != null){
+            throw new DataAccessException("Error game over cannot resign");
+        }
+        String username = getUsername(authToken);
+
+        if (game.whiteUsername().equals(username)){
+            game.game().setResigned(ChessGame.TeamColor.WHITE);
+        }
+        else if (game.blackUsername().equals(username)){
+            game.game().setResigned(ChessGame.TeamColor.BLACK);
+        }
+        else{
+            throw new DataAccessException("Error observers cannot resign");
+        }
+        gameDAO.updateGame(gameID,game);
     }
 
     private void validation(AuthData foundToken,int gameID) throws DataAccessException{
@@ -100,5 +123,6 @@ public class GameService {
         }
         return null;
     }
+
 
 }

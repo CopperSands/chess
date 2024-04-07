@@ -14,12 +14,24 @@ public class ChessGame {
 
     private ChessBoard board;
     private TeamColor teamTurn;
+    private TeamColor resigned;
 
 
     public ChessGame() {
         board = new ChessBoard();
         board.resetBoard();
         teamTurn = TeamColor.WHITE;
+        resigned = null;
+    }
+
+    public void setResigned(TeamColor team){
+        if(resigned == null){
+            resigned = team;
+        }
+    }
+
+    public TeamColor getResigned(){
+        return resigned;
     }
 
     /**

@@ -14,6 +14,7 @@ import webSocketMessages.serverMessages.ErrorMessage;
 import webSocketMessages.serverMessages.LoadMessage;
 import webSocketMessages.serverMessages.NoticeMessage;
 import webSocketMessages.serverMessages.ServerMessage;
+import webSocketMessages.userCommands.GenCommand;
 import webSocketMessages.userCommands.JoinCommand;
 import webSocketMessages.userCommands.MoveCommand;
 import webSocketMessages.userCommands.UserGameCommand;
@@ -55,7 +56,34 @@ public class WebSocketHandler {
         else if (command.getCommandType() == CommandType.MAKE_MOVE){
             makeMove(session,message,gameService);
         }
+        else if (command.getCommandType() == CommandType.RESIGN){
+            resign(session,message,gameService);
+        }
 
+    }
+
+    private void resign(Session session, String message, GameService gameService) {
+        Gson gson = new Gson();
+        try{
+            GenCommand command = gson.fromJson(message,GenCommand.class);
+            gameService.resignGame(command.getAuthString(), command.getGameID());
+            String username = gameService.getUsername(command.getAuthString());
+            String result = username + " has resigned";
+            NoticeMessage notice = new NoticeMessage(ServerMessage.ServerMessageType.NOTIFICATION,result);
+            String res = gson.toJson(notice);
+            session.getRemote().sendString(res);
+            broadcastMessage(command.getGameID(),res,command.getAuthString());
+        } catch (DataAccessException e) {
+            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR,e.getMessage());
+            String error = gson.toJson(errorMessage);
+            try {
+                session.getRemote().sendString(error);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void makeMove(Session session, String message, GameService gameService){
