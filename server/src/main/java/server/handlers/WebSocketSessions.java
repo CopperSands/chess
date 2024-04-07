@@ -1,6 +1,7 @@
 package server.handlers;
 import org.eclipse.jetty.websocket.api.Session;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -12,7 +13,7 @@ public class WebSocketSessions {
         //check if sessions for game exist
         Map<String, Session> gameSession = getGameSession(gameID);
         if (gameSession == null){
-            gameSession = new ConcurrentHashMap<>();
+            gameSession = new HashMap<>();
         }
         gameSession.put(authToken,session);
         sessionMap.put(Integer.valueOf(gameID), gameSession);

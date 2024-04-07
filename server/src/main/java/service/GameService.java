@@ -1,10 +1,10 @@
 package service;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
-import dataAccess.AuthDAO;
-import dataAccess.DataAccessException;
-import dataAccess.GameDAO;
+import dataAccess.*;
 import model.AuthData;
 import model.GameData;
 
@@ -19,10 +19,36 @@ public class GameService {
         this.gameDAO = gameDAO;
     }
 
+    public GameData makeMove(String authToken, ChessMove move, int gameID) throws DataAccessException{
+        try{
+            AuthData foundToken = authDAO.getAuth(authToken);
+            validation(foundToken,gameID);
+            ChessGame.TeamColor teamTurn = game.game().getTeamTurn();
+            if (!game.blackUsername().equals(foundToken.username()) &&
+                    !game.whiteUsername().equals(foundToken.username())){
+                throw new DataAccessException("Error you are not a player");
+            }
+            if (game.blackUsername().equals(foundToken.username()) && ChessGame.TeamColor.BLACK != teamTurn){
+                throw new DataAccessException("Error not your turn");
+            }
+            else if (game.whiteUsername().equals(foundToken.username()) && ChessGame.TeamColor.WHITE != teamTurn){
+                throw new DataAccessException("Error not your turn");
+            }
+            game.game().makeMove(move);
+            gameDAO.updateGame(gameID,game);
+            return game;
+
+        } catch (DataAccessException e) {
+            throw e;
+        } catch (InvalidMoveException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+    }
+
     public ChessGame loadGame(String authToken, String clientColor, int gameID) throws DataAccessException {
         try{
             AuthData foundToken = authDAO.getAuth(authToken);
-            joinValidation(foundToken,gameID);
+            validation(foundToken,gameID);
             if (clientColor != null) {
                 if (!isValidTeam(clientColor, foundToken.username())) {
                     throw new DataAccessException("Error team already taken");
@@ -30,11 +56,11 @@ public class GameService {
             }
             return game.game();
         }catch (DataAccessException e){
-            throw new DataAccessException(e.getMessage());
+            throw e;
         }
     }
 
-    private void joinValidation(AuthData foundToken,int gameID) throws DataAccessException{
+    private void validation(AuthData foundToken,int gameID) throws DataAccessException{
         if (foundToken == null){
             throw new DataAccessException("Error unauthorized");
         }
@@ -74,4 +100,5 @@ public class GameService {
         }
         return null;
     }
+
 }

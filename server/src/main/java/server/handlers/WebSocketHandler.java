@@ -3,6 +3,7 @@ package server.handlers;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import dataAccess.*;
+import model.GameData;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -14,13 +15,14 @@ import webSocketMessages.serverMessages.LoadMessage;
 import webSocketMessages.serverMessages.NoticeMessage;
 import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.JoinCommand;
+import webSocketMessages.userCommands.MoveCommand;
 import webSocketMessages.userCommands.UserGameCommand;
 import webSocketMessages.userCommands.UserGameCommand.CommandType;
 
 import java.io.IOException;
 import java.util.Map;
 
-
+//the annotation gives compiler hints that this is a web socket
 @WebSocket
 public class WebSocketHandler {
 
@@ -46,13 +48,41 @@ public class WebSocketHandler {
         UserGameCommand command = gson.fromJson(message, UserGameCommand.class);
         GameService gameService = new GameService(authDAO,gameDAO);
 
-        System.out.println(command.getCommandType());
-        System.out.println(command.getAuthString());
-
         if (command.getCommandType() == CommandType.JOIN_PLAYER ||
                 command.getCommandType() == CommandType.JOIN_OBSERVER){
-            System.out.println("wants to join game");
             joinGame(session,message,gameService);
+        }
+        else if (command.getCommandType() == CommandType.MAKE_MOVE){
+            makeMove(session,message,gameService);
+        }
+
+    }
+
+    private void makeMove(Session session, String message, GameService gameService){
+        Gson gson = new Gson();
+        try{
+            MoveCommand moveCommand = gson.fromJson(message,MoveCommand.class);
+            GameData game = gameService.makeMove(moveCommand.getAuthString(), moveCommand.getMove(), moveCommand.getGameID());
+            String result = "Successful move";
+            LoadMessage loadMessage = new LoadMessage(ServerMessage.ServerMessageType.LOAD_GAME,result,game.game());
+            String res = gson.toJson(loadMessage);
+            session.getRemote().sendString(res);
+            NoticeMessage notice = new NoticeMessage(ServerMessage.ServerMessageType.NOTIFICATION,result);
+            String data = gson.toJson(notice);
+            broadcastMessage(game.gameID(),res, moveCommand.getAuthString());
+            broadcastMessage(game.gameID(),data, moveCommand.getAuthString());
+
+
+        } catch (DataAccessException e) {
+            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR,e.getMessage());
+            String error = gson.toJson(errorMessage);
+            try {
+                session.getRemote().sendString(error);
+            } catch (IOException ex) {
+                System.out.println(e.getMessage());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
     }
@@ -92,7 +122,6 @@ public class WebSocketHandler {
         try {
             GameService gameService = new GameService(authDAO,gameDAO);
             ChessGame game = gameService.loadGame(joinCommand.getAuthString(),joinCommand.getPlayerColor(),joinCommand.getGameID());
-            System.out.println("Successful join");
             return game;
         } catch (DataAccessException e) {
             throw e;
@@ -104,7 +133,9 @@ public class WebSocketHandler {
         for (String key: gameSession.keySet()){
             if(!key.equals(excludeAuthToken)){
                 Session other = gameSession.get(key);
-                other.getRemote().sendString(message);
+                if (other.isOpen()){
+                    other.getRemote().sendString(message);
+                }
             }
         }
     }
