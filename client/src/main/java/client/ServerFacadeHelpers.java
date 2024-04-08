@@ -26,9 +26,9 @@ public class ServerFacadeHelpers {
             outputStream.write(json.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {e.printStackTrace();}
     }
-    public static HttpURLConnection getConnAndAuth(URI uri, String HttpVerb, String authToken) throws Exception{
+    public static HttpURLConnection getConnAndAuth(URI uri, String httpVerb, String authToken) throws Exception{
         HttpURLConnection httpConn = (HttpURLConnection) uri.toURL().openConnection();
-        httpConn.setRequestMethod(HttpVerb);
+        httpConn.setRequestMethod(httpVerb);
         httpConn.addRequestProperty("authorization",authToken);
         return httpConn;
     }

@@ -38,9 +38,9 @@ public class ClientPrint {
     }
 
     public static void printBoard(ChessBoard board){
-        String Header = "  h  g   f  e   d  c   b   a ";
+        String header = "  h  g   f  e   d  c   b   a ";
         //print black top
-        System.out.println(SET_TEXT_ITALIC + "  " + Header + RESET_TEXT_ITALIC);
+        System.out.println(SET_TEXT_ITALIC + "  " + header + RESET_TEXT_ITALIC);
         int count = 1;
         for (int row = 8; row > 0; row--){
             System.out.print(count + " ");
@@ -53,11 +53,11 @@ public class ClientPrint {
             System.out.print(SET_BG_COLOR_DARK_GREY + count + "\n");
             count++;
         }
-        System.out.println(SET_TEXT_ITALIC + "  " + Header + RESET_TEXT_ITALIC);
+        System.out.println(SET_TEXT_ITALIC + "  " + header + RESET_TEXT_ITALIC);
     }
     public static void printReverseBoard(ChessBoard board){
-        String Header = "  a  b   c  d   e  f   g   h ";
-        System.out.println(SET_TEXT_ITALIC + "  " + Header + RESET_TEXT_ITALIC);
+        String header = "  a  b   c  d   e  f   g   h ";
+        System.out.println(SET_TEXT_ITALIC + "  " + header + RESET_TEXT_ITALIC);
         int count = 8;
         for (int row = 1; row < 9; row++){
             System.out.print(count + " ");
@@ -69,7 +69,7 @@ public class ClientPrint {
             System.out.print(SET_BG_COLOR_DARK_GREY + count + "\n");
             count--;
         }
-        System.out.println(SET_TEXT_ITALIC + "  " + Header + RESET_TEXT_ITALIC);
+        System.out.println(SET_TEXT_ITALIC + "  " + header + RESET_TEXT_ITALIC);
     }
     public static void printSquare(int row, int col, ChessPiece piece){
         String backColor;

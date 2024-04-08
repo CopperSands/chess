@@ -36,12 +36,12 @@ public class WebSocketHandler {
     }
 
     @OnWebSocketConnect
-    public void OnConnect(Session session) {
+    public void onConnect(Session session) {
         System.out.print("connected to websocket");
     }
 
     @OnWebSocketMessage
-    public void OnMessage(Session session, String message) {
+    public void onMessage(Session session, String message) {
         System.out.println(message);
         Gson gson = new Gson();
         UserGameCommand command = gson.fromJson(message, UserGameCommand.class);
@@ -55,7 +55,7 @@ public class WebSocketHandler {
     }
 
     @OnWebSocketClose
-    public void OnClose(Session session, int statusCode, String reason){
+    public void onClose(Session session, int statusCode, String reason){
         webSessions.removeSession(session);
     }
 
@@ -71,13 +71,7 @@ public class WebSocketHandler {
             session.getRemote().sendString(res);
             broadcastMessage(command.getGameID(),res,command.getAuthString());
         } catch (DataAccessException e) {
-            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR,e.getMessage());
-            String error = gson.toJson(errorMessage);
-            try {
-                session.getRemote().sendString(error);
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
+            sendError(gson,session,e);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -99,17 +93,10 @@ public class WebSocketHandler {
 
 
         } catch (DataAccessException e) {
-            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR,e.getMessage());
-            String error = gson.toJson(errorMessage);
-            try {
-                session.getRemote().sendString(error);
-            } catch (IOException ex) {
-                System.out.println(e.getMessage());
-            }
+            sendError(gson,session,e);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     private void joinGame(Session session, String message, GameService gameService){
@@ -128,18 +115,10 @@ public class WebSocketHandler {
             NoticeMessage notice = new NoticeMessage(ServerMessage.ServerMessageType.NOTIFICATION,joinMessage);
             String data = gson.toJson(notice);
             broadcastMessage(joinCommand.getGameID(),data,joinCommand.getAuthString());
-
         } catch (IOException e) {
             System.out.println("Error sending message");
         } catch (DataAccessException e) {
-            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR,e.getMessage());
-            String error = gson.toJson(errorMessage);
-            try {
-                session.getRemote().sendString(error);
-            } catch (IOException ex) {
-                System.out.println(e.getMessage());
-            }
-            System.out.println(e.getMessage());
+            sendError(gson,session,e);
         }
     }
 
@@ -160,13 +139,7 @@ public class WebSocketHandler {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (DataAccessException e) {
-            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR,e.getMessage());
-            String error = gson.toJson(errorMessage);
-            try {
-                session.getRemote().sendString(error);
-            } catch (IOException ex) {
-                System.out.println(e.getMessage());
-            }
+            sendError(gson,session,e);
         }
         session.close();
 
@@ -191,6 +164,16 @@ public class WebSocketHandler {
                     other.getRemote().sendString(message);
                 }
             }
+        }
+    }
+
+    private void sendError(Gson gson, Session session, Exception e){
+        ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR,e.getMessage());
+        String error = gson.toJson(errorMessage);
+        try {
+            session.getRemote().sendString(error);
+        } catch (IOException ex) {
+            System.out.println(e.getMessage());
         }
     }
 }
