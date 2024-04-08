@@ -4,12 +4,12 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import dataAccess.*;
 import model.GameData;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.eclipse.jetty.websocket.api.Session;
 import service.GameService;
-import service.JoinGameService;
 import webSocketMessages.serverMessages.ErrorMessage;
 import webSocketMessages.serverMessages.LoadMessage;
 import webSocketMessages.serverMessages.NoticeMessage;
@@ -18,8 +18,6 @@ import webSocketMessages.userCommands.GenCommand;
 import webSocketMessages.userCommands.JoinCommand;
 import webSocketMessages.userCommands.MoveCommand;
 import webSocketMessages.userCommands.UserGameCommand;
-import webSocketMessages.userCommands.UserGameCommand.CommandType;
-
 import java.io.IOException;
 import java.util.Map;
 
@@ -48,18 +46,17 @@ public class WebSocketHandler {
         Gson gson = new Gson();
         UserGameCommand command = gson.fromJson(message, UserGameCommand.class);
         GameService gameService = new GameService(authDAO,gameDAO);
+        switch (command.getCommandType()){
+            case JOIN_PLAYER,JOIN_OBSERVER -> joinGame(session,message,gameService);
+            case MAKE_MOVE -> makeMove(session,message,gameService);
+            case RESIGN -> resign(session,message,gameService);
+            case LEAVE -> leaveGame(session,message,gameService);
+        }
+    }
 
-        if (command.getCommandType() == CommandType.JOIN_PLAYER ||
-                command.getCommandType() == CommandType.JOIN_OBSERVER){
-            joinGame(session,message,gameService);
-        }
-        else if (command.getCommandType() == CommandType.MAKE_MOVE){
-            makeMove(session,message,gameService);
-        }
-        else if (command.getCommandType() == CommandType.RESIGN){
-            resign(session,message,gameService);
-        }
-
+    @OnWebSocketClose
+    public void OnClose(Session session, int statusCode, String reason){
+        webSessions.removeSession(session);
     }
 
     private void resign(Session session, String message, GameService gameService) {
@@ -144,6 +141,35 @@ public class WebSocketHandler {
             }
             System.out.println(e.getMessage());
         }
+    }
+
+    private void leaveGame(Session session, String message, GameService gameService) {
+        Gson gson = new Gson();
+        GenCommand command = gson.fromJson(message,GenCommand.class);
+        try {
+        if (!webSessions.isSessionInGame(command.getGameID(), command.getAuthString())){
+            throw new DataAccessException("you are not part of this game");
+        }
+        webSessions.removeSessionInGame(command.getGameID(), command.getAuthString(),session);
+        String username = gameService.getUsername(command.getAuthString());
+        String leaveMessage = username + " has left the game";
+        NoticeMessage notice = new NoticeMessage(ServerMessage.ServerMessageType.NOTIFICATION,leaveMessage);
+        String res = gson.toJson(notice);
+        session.getRemote().sendString(res);
+        broadcastMessage(command.getGameID(), res, command.getAuthString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (DataAccessException e) {
+            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR,e.getMessage());
+            String error = gson.toJson(errorMessage);
+            try {
+                session.getRemote().sendString(error);
+            } catch (IOException ex) {
+                System.out.println(e.getMessage());
+            }
+        }
+        session.close();
+
     }
 
     private ChessGame getGame(JoinCommand joinCommand) throws DataAccessException{
