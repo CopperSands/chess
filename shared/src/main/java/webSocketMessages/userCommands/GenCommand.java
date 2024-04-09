@@ -6,8 +6,9 @@ public class GenCommand extends UserGameCommand{
 
     private int gameID;
 
-    public GenCommand(String authToken,int gameID) {
+    public GenCommand(String authToken, int gameID,CommandType type){
         super(authToken);
+        this.commandType = type;
         this.gameID = gameID;
     }
 

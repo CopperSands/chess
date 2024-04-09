@@ -88,7 +88,14 @@ public class ClientOptions {
                         ClientPrint.printBoard(game.game().getBoard());
                         ClientPrint.printReverseBoard(game.game().getBoard());
                         webSocket = new ClientWebSocket(port, serverFacade.getAuthToken());
-                        webSocket.joinGame(game.gameID(), null);
+                        if (game.blackUsername() != null && game.blackUsername().equals(serverFacade.getUsername())){
+                            webSocket.joinGame(game.gameID(), "BLACK");
+                        }
+                        else if (game.whiteUsername() != null && game.whiteUsername().equals(serverFacade.getUsername())){
+                            webSocket.joinGame(game.gameID(), "WHITE");
+                        }else{
+                            webSocket.joinGame(game.gameID(), null);
+                        }
                     } catch (Exception e) {System.out.println(e.getMessage());}
                 }
             }
@@ -122,6 +129,22 @@ public class ClientOptions {
         boolean isLoggedIn = true;
         if (option.equals("help") || option.equals("Help")){
             ClientPrint.socketHelp();
+        }
+        else if (option.equals("leave")){
+            try {
+                webSocket.leaveGame();
+                webSocket = null;
+            } catch (Exception e) {
+                System.out.println("Error leaving game");
+                if (e.getMessage().equals("session closed")){
+                    webSocket = null;
+                }
+            }
+        }else if (option.equals("redraw")){
+            webSocket.redrawBoard();
+        }
+        else if (option.equals("resign")){
+
         }
 
         return new GameLoop(isLive,isLoggedIn,webSocket);

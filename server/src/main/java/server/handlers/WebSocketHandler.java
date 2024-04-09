@@ -4,10 +4,7 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import dataAccess.*;
 import model.GameData;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
-import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.api.Session;
 import service.GameService;
 import webSocketMessages.serverMessages.ErrorMessage;
@@ -52,6 +49,12 @@ public class WebSocketHandler {
             case RESIGN -> resign(session,message,gameService);
             case LEAVE -> leaveGame(session,message,gameService);
         }
+    }
+
+    @OnWebSocketError
+    public void onError(Throwable error){
+        System.out.println("There was a websocket error");
+        System.out.println(error.getMessage());
     }
 
     @OnWebSocketClose
