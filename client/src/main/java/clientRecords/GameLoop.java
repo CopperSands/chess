@@ -1,4 +1,6 @@
 package clientRecords;
 
-public record GameLoop(boolean isLive, boolean isLoggedIn) {
+import client.ClientWebSocket;
+
+public record GameLoop(boolean isLive, boolean isLoggedIn, ClientWebSocket webSocket) {
 }

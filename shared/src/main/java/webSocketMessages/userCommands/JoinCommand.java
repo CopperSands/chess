@@ -14,6 +14,23 @@ public class JoinCommand extends UserGameCommand{
         super(authToken);
     }
 
+    public JoinCommand(String authToken, int gameID, String playerColor){
+        super(authToken);
+        this.gameID = gameID;
+        commandType = CommandType.JOIN_PLAYER;
+        if (playerColor == null){
+            this.playerColor = null;
+            commandType = CommandType.JOIN_OBSERVER;
+        }
+        else if (playerColor.equals("WHITE")){
+            this.playerColor = ChessGame.TeamColor.WHITE;
+
+        }
+        else {
+            this.playerColor = ChessGame.TeamColor.BLACK;
+        }
+    }
+
     public int getGameID() {
         return gameID;
     }

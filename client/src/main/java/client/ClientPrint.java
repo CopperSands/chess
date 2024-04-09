@@ -13,6 +13,14 @@ import static ui.EscapeSequences.SET_TEXT_COLOR_WHITE;
 
 public class ClientPrint {
 
+    public static void socketHelp(){
+        System.out.println("\t redraw - redraw the chess board");
+        System.out.println("\t move <from> <to> - move a chess piece example: move a2 a4");
+        System.out.println("\t legal-moves <position> - highlights legal moves for a piece");
+        System.out.println("\t leave - leave the game for now");
+        System.out.println("\t resign - resign the game by forfeit");
+    }
+
     public static void loggedOutHelp(){
         System.out.println("\t register <USERNAME> <PASSWORD> <EMAIL> - used to create an account");
         System.out.println("\t login <USERNAME> <PASSWORD> - used to login");
@@ -133,5 +141,15 @@ public class ClientPrint {
                 System.out.print(backColor + SET_TEXT_COLOR_BLACK + BLACK_QUEEN + SET_TEXT_COLOR_WHITE);
             }
         }
+    }
+
+    public static String getStatus (boolean isLoggedIn){
+        String status;
+        if (isLoggedIn){
+            status = "[LOGGED_IN] >>> ";
+        } else{
+            status = "[LOGGED_OUT] >>> ";
+        }
+        return status;
     }
 }

@@ -114,6 +114,10 @@ public class ServerFacade {
         return gameList;
     }
 
+    public String getAuthToken(){
+        return authData.authToken();
+    }
+
     private void putGame(String team, int gameID) throws Exception{
         Gson gson = new Gson();
         JoinJson joinData = new JoinJson(team,gameID);
