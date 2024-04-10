@@ -2,7 +2,9 @@ package client;
 
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPiece;
 import chess.ChessPosition;
+import clientRecords.ClientChessPos;
 import com.google.gson.Gson;
 import webSocketMessages.serverMessages.ErrorMessage;
 import webSocketMessages.serverMessages.LoadMessage;
@@ -10,6 +12,7 @@ import webSocketMessages.serverMessages.NoticeMessage;
 import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.GenCommand;
 import webSocketMessages.userCommands.JoinCommand;
+import webSocketMessages.userCommands.MoveCommand;
 import webSocketMessages.userCommands.UserGameCommand;
 
 import javax.websocket.*;
@@ -17,6 +20,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -125,17 +129,8 @@ public class ClientWebSocket extends Endpoint {
     }
 
     protected void getValidMoves(String pieceAt) throws Exception{
-        //check that the chess square is within the valid range
-        Pattern p = Pattern.compile("[a-h][1-8]");
-        Matcher m = p.matcher(pieceAt);
-        if (!m.matches() || pieceAt.length() != 2){
-            throw new Exception("Invalid position");
-        }
-        int col = pieceAt.charAt(0) - 96;
-        int revRow = pieceAt.charAt(1) - 48 ;
-        //display row numbers are the inverse of the actual board row in storage
-        int row = 9 - revRow;
-        ChessPosition position = new ChessPosition(row,col);
+        ClientChessPos pos = getChessSquare(pieceAt);
+        ChessPosition position = new ChessPosition(pos.row(), pos.col());
         Collection<ChessMove> validMoves = null;
         ArrayList<ChessPosition> validPositions = null;
         //check if piece exists
@@ -160,6 +155,20 @@ public class ClientWebSocket extends Endpoint {
 
     }
 
+    private ClientChessPos getChessSquare(String pieceAt) throws Exception{
+        //check that the chess square is within the valid range
+        Pattern p = Pattern.compile("[a-h][1-8]");
+        Matcher m = p.matcher(pieceAt);
+        if (!m.matches() || pieceAt.length() != 2){
+            throw new Exception("Invalid position");
+        }
+        int col = pieceAt.charAt(0) - 96;
+        int revRow = pieceAt.charAt(1) - 48 ;
+        //display row numbers are the inverse of the actual board row in storage
+        int row = 9 - revRow;
+        return new ClientChessPos(row,col);
+    }
+
     protected void leaveGame() throws Exception {
         sendGenCommand(UserGameCommand.CommandType.LEAVE);
     }
@@ -174,5 +183,44 @@ public class ClientWebSocket extends Endpoint {
         send(req);
     }
 
+    protected void makeMove(String startAt, String endAt, String promotionType) throws Exception{
+        System.out.println("the turn gose to" + game.getTeamTurn());
+        ClientChessPos startPos = getChessSquare(startAt);
+        ClientChessPos endPos = getChessSquare(endAt);
+        ChessPosition start = new ChessPosition(startPos.row(),startPos.col());
+        ChessPosition end = new ChessPosition(endPos.row(), endPos.col());
+        ChessPiece.PieceType pieceType = getPieceType(promotionType);
+        ChessMove move = new ChessMove(start,end,pieceType);
+        MoveCommand moveCommand = new MoveCommand(authToken,gameID,move);
+        Gson gson = new Gson();
+        String req = gson.toJson(moveCommand);
+        send(req);
+    }
 
+    private ChessPiece.PieceType getPieceType(String type){
+        if (type == null){
+            return null;
+        }
+        type = type.toUpperCase(Locale.ROOT);
+        ChessPiece.PieceType pieceType = null;
+        if (type.equals(ChessPiece.PieceType.PAWN.toString())){
+            pieceType = ChessPiece.PieceType.PAWN;
+        }
+        else if (type.equals(ChessPiece.PieceType.BISHOP.toString())){
+            pieceType = ChessPiece.PieceType.BISHOP;
+        }
+        else if (type.equals(ChessPiece.PieceType.ROOK.toString())){
+            pieceType = ChessPiece.PieceType.ROOK;
+        }
+        else if (type.equals(ChessPiece.PieceType.KNIGHT.toString())){
+            pieceType = ChessPiece.PieceType.KNIGHT;
+        }
+        else if (type.equals(ChessPiece.PieceType.QUEEN.toString())){
+            pieceType = ChessPiece.PieceType.QUEEN;
+        }
+        else if (type.equals(ChessPiece.PieceType.KING.toString())){
+            pieceType = ChessPiece.PieceType.KING;
+        }
+        return pieceType;
+    }
 }

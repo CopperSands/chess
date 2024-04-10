@@ -31,11 +31,13 @@ public class GameService {
                     !game.whiteUsername().equals(foundToken.username())){
                 throw new DataAccessException("Error you are not a player");
             }
-            if (game.blackUsername().equals(foundToken.username()) && ChessGame.TeamColor.BLACK != teamTurn){
-                throw new DataAccessException("Error not your turn");
-            }
-            else if (game.whiteUsername().equals(foundToken.username()) && ChessGame.TeamColor.WHITE != teamTurn){
-                throw new DataAccessException("Error not your turn");
+            if (!game.whiteUsername().equals(game.blackUsername())){
+                if (game.blackUsername().equals(foundToken.username()) && ChessGame.TeamColor.BLACK != teamTurn){
+                    throw new DataAccessException("Error not your turn");
+                }
+                else if (game.whiteUsername().equals(foundToken.username()) && ChessGame.TeamColor.WHITE != teamTurn){
+                    throw new DataAccessException("Error not your turn");
+                }
             }
             game.game().makeMove(move);
             gameDAO.updateGame(gameID,game);

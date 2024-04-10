@@ -13,7 +13,8 @@ public class ClientPrint {
 
     public static void socketHelp(){
         System.out.println("\t redraw - redraw the chess board");
-        System.out.println("\t move <from> <to> - move a chess piece example: move a2 a4");
+        System.out.println("\t move <from> <to> [pawn Promotion] - move a chess piece example: move a2 a4." +
+                "\n\t\t The forth field is optional and only used upgrading pawns");
         System.out.println("\t legal-moves <position> - highlights legal moves for a piece");
         System.out.println("\t leave - leave the game for now");
         System.out.println("\t resign - resign the game by forfeit");

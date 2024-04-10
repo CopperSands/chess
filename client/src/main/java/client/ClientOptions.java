@@ -151,7 +151,19 @@ public class ClientOptions {
                 }
             }
             else if (option.contains("move ")){
-                String [] Makemove = option.split(" +");
+                String [] makeMove = option.split(" +");
+                if (makeMove.length == 3 || makeMove.length == 4){
+                    if (makeMove.length == 3){
+                        webSocket.makeMove(makeMove[1],makeMove[2],null);
+                    }
+                    else{
+                     webSocket.makeMove(makeMove[1],makeMove[2],makeMove[3]);
+                    }
+                }
+                else{
+                    System.out.println("Invalid command");
+                }
+
             }
             else{
                 System.out.println("Invalid command");
