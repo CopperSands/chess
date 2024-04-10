@@ -72,12 +72,6 @@ public class ClientWebSocket extends Endpoint {
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
 
-    @OnError
-    public void onError(Throwable error){
-        System.out.println("socket error exiting");
-        System.out.println(error.getMessage());
-    }
-
     protected void getError(String message){
         Gson gson = new Gson();
         ErrorMessage errorMessage = gson.fromJson(message,ErrorMessage.class);

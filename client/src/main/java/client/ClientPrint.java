@@ -83,7 +83,6 @@ public class ClientPrint {
                 ChessPosition pos = new ChessPosition(row,col);
                 ChessPiece piece = board.getPiece(pos);
                 if (pieceMoves == null){
-                    //get background color for odd and even
                     printSquare(row,col,piece,false);
                 }
                 else{
