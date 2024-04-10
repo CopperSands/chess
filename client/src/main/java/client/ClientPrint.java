@@ -52,20 +52,7 @@ public class ClientPrint {
         for (int row = 8; row > 0; row--){
             System.out.print(count + " ");
             for (int col = 8; col > 0; col--){
-                ChessPosition pos = new ChessPosition(row,col);
-                ChessPiece piece = board.getPiece(pos);
-                if (pieceMoves == null){
-                    //get background color for odd and even
-                    printSquare(row,col,piece,false);
-                }
-                else{
-                    if (pieceMoves.contains(pos)){
-                        printSquare(row,col,piece,true);
-                    }
-                    else{
-                        printSquare(row,col,piece,false);
-                    }
-                }
+                createSquare(row,col,board,pieceMoves);
             }
             System.out.print(SET_BG_COLOR_DARK_GREY + count + "\n");
             count++;
@@ -80,24 +67,29 @@ public class ClientPrint {
         for (int row = 1; row < 9; row++){
             System.out.print(count + " ");
             for (int col = 1; col < 9; col++){
-                ChessPosition pos = new ChessPosition(row,col);
-                ChessPiece piece = board.getPiece(pos);
-                if (pieceMoves == null){
-                    printSquare(row,col,piece,false);
-                }
-                else{
-                    if (pieceMoves.contains(pos)){
-                        printSquare(row,col,piece,true);
-                    }
-                    else{
-                        printSquare(row,col,piece,false);
-                    }
-                }
+                createSquare(row,col,board,pieceMoves);
             }
             System.out.print(SET_BG_COLOR_DARK_GREY + count + "\n");
             count--;
         }
         System.out.println(SET_TEXT_ITALIC + "  " + header + RESET_TEXT_ITALIC);
+    }
+
+    private static void createSquare(int row,int col, ChessBoard board,Collection<ChessPosition> pieceMoves){
+        ChessPosition pos = new ChessPosition(row,col);
+        ChessPiece piece = board.getPiece(pos);
+        if (pieceMoves == null){
+            //get background color for odd and even
+            printSquare(row,col,piece,false);
+        }
+        else{
+            if (pieceMoves.contains(pos)){
+                printSquare(row,col,piece,true);
+            }
+            else{
+                printSquare(row,col,piece,false);
+            }
+        }
     }
     public static void printSquare(int row, int col, ChessPiece piece,boolean highLight){
         String backColor;
