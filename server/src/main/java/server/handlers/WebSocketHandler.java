@@ -168,16 +168,16 @@ public class WebSocketHandler {
     private void alertGameChange(GameData game) throws IOException {
         String result = null;
         if (game.game().isInCheckmate(ChessGame.TeamColor.WHITE)){
-            result = game.blackUsername() + "has won! " + game.whiteUsername() + " is in checkmate";
+            result = game.blackUsername() + " has won! " + game.whiteUsername() + " is in checkmate";
         }
         else if (game.game().isInCheckmate(ChessGame.TeamColor.BLACK)){
-            result = game.whiteUsername() + "has won! " + game.blackUsername() + " is in checkmate";
+            result = game.whiteUsername() + " has won! " + game.blackUsername() + " is in checkmate";
         }
         else if (game.game().isInCheck(ChessGame.TeamColor.WHITE)){
-            result = game.whiteUsername() + "is in check";
+            result = game.whiteUsername() + " is in check";
         }
         else if (game.game().isInCheck(ChessGame.TeamColor.BLACK)){
-            result = game.blackUsername() + "is in check";
+            result = game.blackUsername() + " is in check";
         }
         if (result != null){
             NoticeMessage notice = new NoticeMessage(ServerMessage.ServerMessageType.NOTIFICATION,result);
