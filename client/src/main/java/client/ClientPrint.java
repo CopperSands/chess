@@ -1,12 +1,10 @@
 package client;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 import model.GameData;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import static ui.EscapeSequences.*;
 import static ui.EscapeSequences.SET_TEXT_COLOR_WHITE;
@@ -45,7 +43,7 @@ public class ClientPrint {
         }
     }
 
-    public static void printBoard(ChessBoard board){
+    public static void printBoard(ChessBoard board, Collection<ChessPosition> pieceMoves){
         String header = "  h  g   f  e   d  c   b   a ";
         //print black top
         System.out.println(SET_TEXT_ITALIC + "  " + header + RESET_TEXT_ITALIC);
@@ -55,15 +53,26 @@ public class ClientPrint {
             for (int col = 8; col > 0; col--){
                 ChessPosition pos = new ChessPosition(row,col);
                 ChessPiece piece = board.getPiece(pos);
-                //get background color for odd and even
-                printSquare(row,col,piece);
+                if (pieceMoves == null){
+                    //get background color for odd and even
+                    printSquare(row,col,piece,false);
+                }
+                else{
+                    if (pieceMoves.contains(pos)){
+                        printSquare(row,col,piece,true);
+                    }
+                    else{
+                        printSquare(row,col,piece,false);
+                    }
+                }
             }
             System.out.print(SET_BG_COLOR_DARK_GREY + count + "\n");
             count++;
         }
         System.out.println(SET_TEXT_ITALIC + "  " + header + RESET_TEXT_ITALIC);
     }
-    public static void printReverseBoard(ChessBoard board){
+
+    public static void printReverseBoard(ChessBoard board, Collection<ChessPosition> pieceMoves){
         String header = "  a  b   c  d   e  f   g   h ";
         System.out.println(SET_TEXT_ITALIC + "  " + header + RESET_TEXT_ITALIC);
         int count = 8;
@@ -72,28 +81,59 @@ public class ClientPrint {
             for (int col = 1; col < 9; col++){
                 ChessPosition pos = new ChessPosition(row,col);
                 ChessPiece piece = board.getPiece(pos);
-                printSquare(row,col,piece);
+                if (pieceMoves == null){
+                    //get background color for odd and even
+                    printSquare(row,col,piece,false);
+                }
+                else{
+                    if (pieceMoves.contains(pos)){
+                        printSquare(row,col,piece,true);
+                    }
+                    else{
+                        printSquare(row,col,piece,false);
+                    }
+                }
             }
             System.out.print(SET_BG_COLOR_DARK_GREY + count + "\n");
             count--;
         }
         System.out.println(SET_TEXT_ITALIC + "  " + header + RESET_TEXT_ITALIC);
     }
-    public static void printSquare(int row, int col, ChessPiece piece){
+    public static void printSquare(int row, int col, ChessPiece piece,boolean highLight){
         String backColor;
         if ((row % 2) == 0){
             if ((col % 2) == 0){
-                backColor = SET_BG_COLOR_WHITE;
+                if (!highLight){
+                    backColor = SET_BG_COLOR_WHITE;
+                }
+                else{
+                    backColor = SET_BG_COLOR_GREEN;
+                }
             }
             else{
-                backColor = SET_BG_COLOR_BLUE;
+                if (!highLight){
+                    backColor = SET_BG_COLOR_BLUE;
+                }
+                else{
+                    backColor = SET_BG_COLOR_DARK_GREEN;
+                }
             }
         }else{
             if(col % 2 == 0){
-                backColor = SET_BG_COLOR_BLUE;
+                if (!highLight){
+                    backColor = SET_BG_COLOR_BLUE;
+                }
+                else{
+                    backColor = SET_BG_COLOR_DARK_GREEN;
+                }
             }
             else{
-                backColor = SET_BG_COLOR_WHITE;
+                if (!highLight){
+                    backColor = SET_BG_COLOR_WHITE;
+                }
+                else{
+                    backColor = SET_BG_COLOR_GREEN;
+                }
             }
         }
         if (piece == null){

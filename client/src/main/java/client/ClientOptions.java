@@ -77,16 +77,16 @@ public class ClientOptions {
                     join[2] = join[2].toUpperCase(Locale.ROOT);
                     try{
                         game = serverFacade.joinGame(Integer.parseInt(join[1]),join[2]);
-                        ClientPrint.printBoard(game.game().getBoard());
-                        ClientPrint.printReverseBoard(game.game().getBoard());
+                        ClientPrint.printBoard(game.game().getBoard(),null);
+                        ClientPrint.printReverseBoard(game.game().getBoard(),null);
                         webSocket = new ClientWebSocket(port,serverFacade.getAuthToken());
                         webSocket.joinGame(game.gameID(),join[2]);
                     } catch (Exception e) {System.out.println(e.getMessage());}
                 }else{
                     try{
                         game = serverFacade.joinGame(Integer.parseInt(join[1]),null);
-                        ClientPrint.printBoard(game.game().getBoard());
-                        ClientPrint.printReverseBoard(game.game().getBoard());
+                        ClientPrint.printBoard(game.game().getBoard(),null);
+                        ClientPrint.printReverseBoard(game.game().getBoard(),null);
                         webSocket = new ClientWebSocket(port, serverFacade.getAuthToken());
                         if (game.blackUsername() != null && game.blackUsername().equals(serverFacade.getUsername())){
                             webSocket.joinGame(game.gameID(), "BLACK");
@@ -105,8 +105,8 @@ public class ClientOptions {
                 //call join request
                 try{
                     GameData game = serverFacade.joinGame(Integer.parseInt(observe[1]),null);
-                    ClientPrint.printBoard(game.game().getBoard());
-                    ClientPrint.printReverseBoard(game.game().getBoard());
+                    ClientPrint.printBoard(game.game().getBoard(),null);
+                    ClientPrint.printReverseBoard(game.game().getBoard(),null);
                     webSocket = new ClientWebSocket(port,serverFacade.getAuthToken());
                     webSocket.joinGame(game.gameID(), null);
                 } catch (Exception e) {System.out.println(e.getMessage());}
@@ -127,26 +127,41 @@ public class ClientOptions {
     public static GameLoop socketOptions(String option, ClientWebSocket webSocket){
         boolean isLive = true;
         boolean isLoggedIn = true;
-        if (option.equals("help") || option.equals("Help")){
-            ClientPrint.socketHelp();
-        }
-        else if (option.equals("leave")){
-            try {
-                webSocket.leaveGame();
-                webSocket = null;
-            } catch (Exception e) {
-                System.out.println("Error leaving game");
-                if (e.getMessage().equals("session closed")){
+        option = option.toLowerCase(Locale.ROOT);
+        try {
+            if (option.equals("help")) {
+                ClientPrint.socketHelp();
+            } else if (option.equals("leave")) {
+                    webSocket.leaveGame();
                     webSocket = null;
+            }
+            else if (option.equals("redraw")) {
+                webSocket.redrawBoard();
+            }
+            else if (option.equals("resign")) {
+                webSocket.resignGame();
+            }
+            else if (option.contains("legal-moves")){
+                String [] getmoves = option.split(" +");
+                if (getmoves.length == 2){
+                    webSocket.getValidMoves(getmoves[1]);
+                }
+                else{
+                    System.out.println("Invalid command");
                 }
             }
-        }else if (option.equals("redraw")){
-            webSocket.redrawBoard();
+            else if (option.contains("move ")){
+                String [] Makemove = option.split(" +");
+            }
+            else{
+                System.out.println("Invalid command");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            if (e.getMessage().equals("session closed")) {
+                webSocket = null;
+            }
         }
-        else if (option.equals("resign")){
-
-        }
-
         return new GameLoop(isLive,isLoggedIn,webSocket);
     }
 }

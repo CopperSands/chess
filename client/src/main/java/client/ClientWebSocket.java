@@ -1,6 +1,8 @@
 package client;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import webSocketMessages.serverMessages.ErrorMessage;
 import webSocketMessages.serverMessages.LoadMessage;
@@ -12,6 +14,11 @@ import webSocketMessages.userCommands.UserGameCommand;
 
 import javax.websocket.*;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ClientWebSocket extends Endpoint {
 
@@ -94,10 +101,10 @@ public class ClientWebSocket extends Endpoint {
     protected void redrawBoard(){
         if (game != null){
             if (teamColor == null || teamColor == ChessGame.TeamColor.WHITE){
-                ClientPrint.printBoard(game.getBoard());
+                ClientPrint.printBoard(game.getBoard(),null);
             }
             else{
-                ClientPrint.printReverseBoard(game.getBoard());
+                ClientPrint.printReverseBoard(game.getBoard(),null);
             }
         }
     }
@@ -117,8 +124,51 @@ public class ClientWebSocket extends Endpoint {
 
     }
 
+    protected void getValidMoves(String pieceAt) throws Exception{
+        //check that the chess square is within the valid range
+        Pattern p = Pattern.compile("[a-h][1-8]");
+        Matcher m = p.matcher(pieceAt);
+        if (!m.matches() || pieceAt.length() != 2){
+            throw new Exception("Invalid position");
+        }
+        int col = pieceAt.charAt(0) - 96;
+        int revRow = pieceAt.charAt(1) - 48 ;
+        //display row numbers are the inverse of the actual board row in storage
+        int row = 9 - revRow;
+        ChessPosition position = new ChessPosition(row,col);
+        Collection<ChessMove> validMoves = null;
+        ArrayList<ChessPosition> validPositions = null;
+        //check if piece exists
+        if (game.getBoard().getPiece(position) != null){
+            System.out.println(game.getBoard().getPiece(position).getPieceType() + " " + game.getBoard().getPiece(position).getTeamColor());
+            validMoves = game.validMoves(position);
+            validPositions = new ArrayList<>();
+        }
+        if(validMoves != null){
+            for(Iterator it = validMoves.iterator(); it.hasNext();){
+                validPositions.add( ((ChessMove)it.next()).getEndPosition());
+            }
+        }
+        if (game != null){
+            if (teamColor == null || teamColor == ChessGame.TeamColor.WHITE){
+                ClientPrint.printBoard(game.getBoard(),validPositions);
+            }
+            else{
+                ClientPrint.printReverseBoard(game.getBoard(),validPositions);
+            }
+        }
+
+    }
+
     protected void leaveGame() throws Exception {
-        GenCommand command = new GenCommand(authToken,gameID, UserGameCommand.CommandType.LEAVE);
+        sendGenCommand(UserGameCommand.CommandType.LEAVE);
+    }
+
+    protected void resignGame() throws Exception {
+        sendGenCommand(UserGameCommand.CommandType.RESIGN);
+    }
+    private void sendGenCommand(UserGameCommand.CommandType type) throws Exception{
+        GenCommand command = new GenCommand(authToken,gameID, type);
         Gson gson = new Gson();
         String req = gson.toJson(command);
         send(req);
