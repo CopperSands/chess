@@ -173,7 +173,7 @@ public class ClientWebSocket extends Endpoint {
         sendGenCommand(UserGameCommand.CommandType.LEAVE);
     }
 
-    protected void resignGame() throws Exception {
+    public void resignGame() throws Exception {
         sendGenCommand(UserGameCommand.CommandType.RESIGN);
     }
     private void sendGenCommand(UserGameCommand.CommandType type) throws Exception{

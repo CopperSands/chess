@@ -15,6 +15,8 @@ import webSocketMessages.userCommands.GenCommand;
 import webSocketMessages.userCommands.JoinCommand;
 import webSocketMessages.userCommands.MoveCommand;
 import webSocketMessages.userCommands.UserGameCommand;
+
+import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.util.Map;
 
@@ -85,7 +87,7 @@ public class WebSocketHandler {
         try{
             MoveCommand moveCommand = gson.fromJson(message,MoveCommand.class);
             GameData game = gameService.makeMove(moveCommand.getAuthString(), moveCommand.getMove(), moveCommand.getGameID());
-            String result = "Successful move";
+            String result = "Successful move " + moveCommand.getStartEnd();
             LoadMessage loadMessage = new LoadMessage(ServerMessage.ServerMessageType.LOAD_GAME,result,game.game());
             String res = gson.toJson(loadMessage);
             session.getRemote().sendString(res);
@@ -93,6 +95,8 @@ public class WebSocketHandler {
             String data = gson.toJson(notice);
             broadcastMessage(game.gameID(),res, moveCommand.getAuthString());
             broadcastMessage(game.gameID(),data, moveCommand.getAuthString());
+            alertGameChange(game);
+
 
 
         } catch (DataAccessException e) {
@@ -114,6 +118,9 @@ public class WebSocketHandler {
             session.getRemote().sendString(res);
             String username = gameService.getUsername(joinCommand.getAuthString());
             String joinMessage = username + " has joined the game";
+            if (joinCommand.getPlayerColor() != null){
+                joinMessage = joinMessage + " as " + joinCommand.getPlayerColor();
+            }
             //broadcast
             NoticeMessage notice = new NoticeMessage(ServerMessage.ServerMessageType.NOTIFICATION,joinMessage);
             String data = gson.toJson(notice);
@@ -155,6 +162,28 @@ public class WebSocketHandler {
             return game;
         } catch (DataAccessException e) {
             throw e;
+        }
+    }
+
+    private void alertGameChange(GameData game) throws IOException {
+        String result = null;
+        if (game.game().isInCheckmate(ChessGame.TeamColor.WHITE)){
+            result = game.blackUsername() + "has won! " + game.whiteUsername() + " is in checkmate";
+        }
+        else if (game.game().isInCheckmate(ChessGame.TeamColor.BLACK)){
+            result = game.whiteUsername() + "has won! " + game.blackUsername() + " is in checkmate";
+        }
+        else if (game.game().isInCheck(ChessGame.TeamColor.WHITE)){
+            result = game.whiteUsername() + "is in check";
+        }
+        else if (game.game().isInCheck(ChessGame.TeamColor.BLACK)){
+            result = game.blackUsername() + "is in check";
+        }
+        if (result != null){
+            NoticeMessage notice = new NoticeMessage(ServerMessage.ServerMessageType.NOTIFICATION,result);
+            Gson gson = new Gson();
+            String res = gson.toJson(notice);
+            broadcastMessage(game.gameID(),res,null);
         }
     }
 

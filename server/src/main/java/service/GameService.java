@@ -24,7 +24,13 @@ public class GameService {
             AuthData foundToken = authDAO.getAuth(authToken);
             validation(foundToken,gameID);
             if(game.game().getResigned() != null){
-                throw new DataAccessException("Error game over");
+                throw new DataAccessException("Error game over. " + game.game().getResigned() + " team resigned");
+            }
+            if (game.game().isInCheckmate(ChessGame.TeamColor.BLACK) || game.game().isInCheckmate(ChessGame.TeamColor.WHITE)){
+                if (game.game().isInCheckmate(ChessGame.TeamColor.BLACK)){
+                    throw new DataAccessException("Error game over. " + game.blackUsername() + " is in Checkmate" );
+                }
+                throw new DataAccessException("Error game over. " + game.whiteUsername() + " is in Checkmate");
             }
             ChessGame.TeamColor teamTurn = game.game().getTeamTurn();
             if (!game.blackUsername().equals(foundToken.username()) &&
@@ -38,6 +44,9 @@ public class GameService {
                 else if (game.whiteUsername().equals(foundToken.username()) && ChessGame.TeamColor.WHITE != teamTurn){
                     throw new DataAccessException("Error not your turn");
                 }
+            }
+            if (game.game().isInStalemate(teamTurn)){
+                throw new DataAccessException("Error game over. You are in Stalemate");
             }
             game.game().makeMove(move);
             gameDAO.updateGame(gameID,game);

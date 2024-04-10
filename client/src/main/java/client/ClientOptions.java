@@ -6,6 +6,7 @@ import webSocketMessages.userCommands.JoinCommand;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Scanner;
 
 public class ClientOptions {
 
@@ -137,9 +138,6 @@ public class ClientOptions {
             }
             else if (option.equals("redraw")) {
                 webSocket.redrawBoard();
-            }
-            else if (option.equals("resign")) {
-                webSocket.resignGame();
             }
             else if (option.contains("legal-moves")){
                 String [] getmoves = option.split(" +");

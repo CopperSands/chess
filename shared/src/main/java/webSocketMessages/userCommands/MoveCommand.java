@@ -28,6 +28,28 @@ public class MoveCommand extends UserGameCommand{
         return move;
     }
 
+    public String getStartEnd(){
+        String message = "";
+        if (move != null){
+            if (move.getStartPosition() != null && move.getEndPosition() != null){
+                int sRow = move.getStartPosition().getRow();
+                sRow = 9 - sRow;
+                int sCol = move.getStartPosition().getColumn();
+                int eRow = move.getEndPosition().getRow();
+                eRow = 9 - eRow;
+                int eCol = move.getEndPosition().getColumn();
+
+                char sCharRow = (char)(sRow + 48);
+                char sCharCol = (char)(sCol + 96);
+                char eCharRow = (char)(eRow + 48);
+                char eCharCol = (char)(eCol + 96);
+
+                message = "" + sCharCol + sCharRow + " to " + eCharCol + eCharRow;
+            }
+        }
+        return message;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

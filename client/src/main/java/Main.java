@@ -20,15 +20,37 @@ public class Main {
         System.out.println("Welcome to Chess. Type help to see options.");
         boolean isLive = true;
         boolean isLoggedIn = false;
+        boolean needConfirm = false;
         ClientWebSocket webSocket = null;
         String status;
+
         while (isLive){
             status = ClientPrint.getStatus(isLoggedIn);
             System.out.print(status);
             String option = scanner.nextLine();
-            if (webSocket != null){
-                GameLoop results = ClientOptions.socketOptions(option,webSocket);
-                webSocket = results.webSocket();
+
+            if (webSocket != null) {
+                if(needConfirm){
+                    if (option.equals("Y") || option.equals("y")){
+                        try {
+                            webSocket.resignGame();
+                        } catch (Exception e) {
+                            System.out.println(e.getMessage());
+                            if (e.getMessage().equals("session closed")) {
+                                webSocket = null;
+                            }
+                        }
+                    }
+                    needConfirm = false;
+                }
+                else if (option.equals("resign")) {
+                    needConfirm = true;
+                    System.out.println("Are you sure Y/N");
+                }
+                else{
+                    GameLoop results = ClientOptions.socketOptions(option, webSocket);
+                    webSocket = results.webSocket();
+                }
             }
             else if (isLoggedIn){
               GameLoop results = ClientOptions.loggedInOptions(option,serverFacade,Integer.parseInt(args[0]));
@@ -43,6 +65,4 @@ public class Main {
         //close scanner
         scanner.close();
     }
-
-
 }
