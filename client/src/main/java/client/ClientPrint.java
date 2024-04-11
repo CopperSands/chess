@@ -45,14 +45,14 @@ public class ClientPrint {
     }
 
     public static void printBoard(ChessBoard board, Collection<ChessPosition> pieceMoves){
-        String header = "  h  g   f  e   d  c   b   a ";
+        String header = "  a  b   c  d   e  f   g   h ";
         //print black top
         System.out.println(SET_TEXT_ITALIC + "  " + header + RESET_TEXT_ITALIC);
         // for (int row = 8; row > 0; row--){
         for (int row = 8; row > 0; row--){
             System.out.print(row + " ");
             // for (int col = 8; col > 0; col--)
-            for (int col = 8; col > 0; col--){
+            for (int col = 1; col < 9; col++){
                 createSquare(row,col,board,pieceMoves);
             }
             System.out.print(SET_BG_COLOR_DARK_GREY + row + "\n");
@@ -61,13 +61,13 @@ public class ClientPrint {
     }
 
     public static void printReverseBoard(ChessBoard board, Collection<ChessPosition> pieceMoves){
-        String header = "  a  b   c  d   e  f   g   h ";
+        String header = "  h  g   f  e   d  c   b   a ";
         System.out.println(SET_TEXT_ITALIC + "  " + header + RESET_TEXT_ITALIC);
         //for (int row = 1; row < 9; row++)
         for (int row = 1; row < 9; row++){
             System.out.print(row + " ");
             //for (int col = 1; col < 9; col++)
-            for (int col = 1; col < 9; col++){
+            for (int col = 8; col > 0; col--){
                 createSquare(row,col,board,pieceMoves);
             }
             System.out.print(SET_BG_COLOR_DARK_GREY + row + "\n");
@@ -94,7 +94,7 @@ public class ClientPrint {
     public static void printSquare(int row, int col, ChessPiece piece,boolean highLight){
         String backColor;
         if ((row % 2) == 0){
-            if ((col % 2) == 0){
+            if ((col % 2) != 0){
                 if (!highLight){
                     backColor = SET_BG_COLOR_WHITE;
                 }
@@ -111,7 +111,7 @@ public class ClientPrint {
                 }
             }
         }else{
-            if(col % 2 == 0){
+            if(col % 2 != 0){
                 if (!highLight){
                     backColor = SET_BG_COLOR_BLUE;
                 }
