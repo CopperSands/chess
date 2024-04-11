@@ -48,14 +48,14 @@ public class ClientPrint {
         String header = "  h  g   f  e   d  c   b   a ";
         //print black top
         System.out.println(SET_TEXT_ITALIC + "  " + header + RESET_TEXT_ITALIC);
-        int count = 1;
+        // for (int row = 8; row > 0; row--){
         for (int row = 8; row > 0; row--){
-            System.out.print(count + " ");
+            System.out.print(row + " ");
+            // for (int col = 8; col > 0; col--)
             for (int col = 8; col > 0; col--){
                 createSquare(row,col,board,pieceMoves);
             }
-            System.out.print(SET_BG_COLOR_DARK_GREY + count + "\n");
-            count++;
+            System.out.print(SET_BG_COLOR_DARK_GREY + row + "\n");
         }
         System.out.println(SET_TEXT_ITALIC + "  " + header + RESET_TEXT_ITALIC);
     }
@@ -63,14 +63,14 @@ public class ClientPrint {
     public static void printReverseBoard(ChessBoard board, Collection<ChessPosition> pieceMoves){
         String header = "  a  b   c  d   e  f   g   h ";
         System.out.println(SET_TEXT_ITALIC + "  " + header + RESET_TEXT_ITALIC);
-        int count = 8;
+        //for (int row = 1; row < 9; row++)
         for (int row = 1; row < 9; row++){
-            System.out.print(count + " ");
+            System.out.print(row + " ");
+            //for (int col = 1; col < 9; col++)
             for (int col = 1; col < 9; col++){
                 createSquare(row,col,board,pieceMoves);
             }
-            System.out.print(SET_BG_COLOR_DARK_GREY + count + "\n");
-            count--;
+            System.out.print(SET_BG_COLOR_DARK_GREY + row + "\n");
         }
         System.out.println(SET_TEXT_ITALIC + "  " + header + RESET_TEXT_ITALIC);
     }

@@ -33,10 +33,8 @@ public class MoveCommand extends UserGameCommand{
         if (move != null){
             if (move.getStartPosition() != null && move.getEndPosition() != null){
                 int sRow = move.getStartPosition().getRow();
-                sRow = 9 - sRow;
                 int sCol = move.getStartPosition().getColumn();
                 int eRow = move.getEndPosition().getRow();
-                eRow = 9 - eRow;
                 int eCol = move.getEndPosition().getColumn();
 
                 char sCharRow = (char)(sRow + 48);

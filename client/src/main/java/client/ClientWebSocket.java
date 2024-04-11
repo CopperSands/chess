@@ -157,9 +157,8 @@ public class ClientWebSocket extends Endpoint {
             throw new Exception("Invalid position");
         }
         int col = pieceAt.charAt(0) - 96;
-        int revRow = pieceAt.charAt(1) - 48 ;
+        int row = pieceAt.charAt(1) - 48 ;
         //display row numbers are the inverse of the actual board row in storage
-        int row = 9 - revRow;
         return new ClientChessPos(row,col);
     }
 

@@ -78,16 +78,12 @@ public class ClientOptions {
                     join[2] = join[2].toUpperCase(Locale.ROOT);
                     try{
                         game = serverFacade.joinGame(Integer.parseInt(join[1]),join[2]);
-                        ClientPrint.printBoard(game.game().getBoard(),null);
-                        ClientPrint.printReverseBoard(game.game().getBoard(),null);
                         webSocket = new ClientWebSocket(port,serverFacade.getAuthToken());
                         webSocket.joinGame(game.gameID(),join[2]);
                     } catch (Exception e) {System.out.println(e.getMessage());}
                 }else{
                     try{
                         game = serverFacade.joinGame(Integer.parseInt(join[1]),null);
-                        ClientPrint.printBoard(game.game().getBoard(),null);
-                        ClientPrint.printReverseBoard(game.game().getBoard(),null);
                         webSocket = new ClientWebSocket(port, serverFacade.getAuthToken());
                         if (game.blackUsername() != null && game.blackUsername().equals(serverFacade.getUsername())){
                             webSocket.joinGame(game.gameID(), "BLACK");
@@ -106,8 +102,6 @@ public class ClientOptions {
                 //call join request
                 try{
                     GameData game = serverFacade.joinGame(Integer.parseInt(observe[1]),null);
-                    ClientPrint.printBoard(game.game().getBoard(),null);
-                    ClientPrint.printReverseBoard(game.game().getBoard(),null);
                     webSocket = new ClientWebSocket(port,serverFacade.getAuthToken());
                     webSocket.joinGame(game.gameID(), null);
                 } catch (Exception e) {System.out.println(e.getMessage());}
